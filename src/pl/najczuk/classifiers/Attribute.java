@@ -66,6 +66,15 @@ public class Attribute {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "Attribute{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", nominalValuesMap=" + nominalValuesMap +
+                '}';
+    }
+
     private HashMap<String,Float> getNominalValuesMapFromArray(ArrayList<String> nominalValuesArray){
         HashMap<String,Float> nominalValuesMap = new HashMap<String, Float>();
         Float nominalAttributeValue = new Float(0);

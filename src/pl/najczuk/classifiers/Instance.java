@@ -1,7 +1,6 @@
 package pl.najczuk.classifiers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * User: Adrian
@@ -12,7 +11,7 @@ public class Instance {
     private ArrayList<Attribute> attributes;
     private ArrayList<Float> values;
 
-    public Instance(ArrayList<Attribute> attributes, ArrayList<Object> values) {
+    public Instance(ArrayList<Attribute> attributes, ArrayList<String> values) {
         this.attributes = attributes;
         this.values = getFloatValuesFromObjects(values);
 
@@ -34,24 +33,35 @@ public class Instance {
         this.values = values;
     }
 
-    private ArrayList<Float> getFloatValuesFromObjects(ArrayList<Object> mixedValues){
+
+
+    private ArrayList<Float> getFloatValuesFromObjects(ArrayList<String> mixedValues) {
         ArrayList<Float> floatValues = new ArrayList<Float>();
         int limit = attributes.size();
-        for (int currentFloatIndex = 0; currentFloatIndex < limit; currentFloatIndex++) {
-            setFloatValueForAttribute(mixedValues, floatValues, currentFloatIndex);
+        for (int currentAttributeIndex = 0; currentAttributeIndex < limit; currentAttributeIndex++) {
+            extractFloatValueForAttribute(mixedValues, floatValues, currentAttributeIndex);
         }
         return floatValues;
 
     }
 
-    private void setFloatValueForAttribute(ArrayList<Object> mixedValues, ArrayList<Float> floatValues, int currentFloatIndex) {
-        if(attributes.get(currentFloatIndex).getType().equals(AttributeType.NUMERIC))
-            floatValues.add(currentFloatIndex,(Float)(mixedValues.get(currentFloatIndex)));
-        else if(attributes.get(currentFloatIndex).getType().equals(AttributeType.NOMINAL)){
-            floatValues.add(currentFloatIndex,attributes.get(currentFloatIndex).getNumericValue((String)(mixedValues.get(currentFloatIndex))));
+    private void extractFloatValueForAttribute(ArrayList<String> mixedValues, ArrayList<Float> floatValues,
+                                               int currentAttributeIndex) {
+        if (attributes.get(currentAttributeIndex).getType().equals(AttributeType.NUMERIC))
+            floatValues.add(currentAttributeIndex, Float.valueOf(mixedValues.get(currentAttributeIndex)));
+        else if (attributes.get(currentAttributeIndex).getType().equals(AttributeType.NOMINAL)) {
+            floatValues.add(currentAttributeIndex, attributes.get(currentAttributeIndex).getNumericValue((
+                     (mixedValues.get(currentAttributeIndex)))));
+        } else {
+            floatValues.add(currentAttributeIndex, null);
         }
-        else{
-            floatValues.add(currentFloatIndex,null);
-        }
+    }
+
+    @Override
+    public String toString() {
+        return "Instance{" +
+                "attributes=" + attributes +
+                ", values=" + values +
+                '}';
     }
 }
