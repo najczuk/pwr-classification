@@ -1,8 +1,9 @@
-package pl.najczuk.classifiers;
+package pl.najczuk.classifiers.readers;
 
 import com.sun.deploy.util.StringUtils;
+import pl.najczuk.classifiers.instances.Attribute;
+import pl.najczuk.classifiers.instances.Instances;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
-package pl.najczuk.classifiers;
+package pl.najczuk.classifiers.instances;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -64,6 +63,27 @@ public class Attribute {
                 return entry.getKey();
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Attribute)) return false;
+
+        Attribute attribute = (Attribute) o;
+
+        if (name != null ? !name.equals(attribute.name) : attribute.name != null) return false;
+        if (nominalValuesMap != null ? !nominalValuesMap.equals(attribute.nominalValuesMap) : attribute.nominalValuesMap != null)
+            return false;
+        if (type != attribute.type) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        return result;
     }
 
     @Override

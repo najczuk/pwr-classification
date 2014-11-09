@@ -1,4 +1,4 @@
-package pl.najczuk.classifiers;
+package pl.najczuk.classifiers.instances;
 
 /**
  * User: Adrian

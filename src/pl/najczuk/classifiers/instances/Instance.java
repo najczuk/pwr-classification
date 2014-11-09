@@ -1,4 +1,4 @@
-package pl.najczuk.classifiers;
+package pl.najczuk.classifiers.instances;
 
 import java.util.ArrayList;
 
@@ -12,8 +12,8 @@ public class Instance {
     private ArrayList<Float> values;
 
     public Instance(ArrayList<Attribute> attributes, ArrayList<String> values) {
-        this.attributes = attributes;
-        this.values = getFloatValuesFromObjects(values);
+        setAttributes( attributes);
+        setValues(getFloatValuesFromObjects(values));
 
     }
 
@@ -37,7 +37,7 @@ public class Instance {
 
     private ArrayList<Float> getFloatValuesFromObjects(ArrayList<String> mixedValues) {
         ArrayList<Float> floatValues = new ArrayList<Float>();
-        int limit = attributes.size();
+        int limit = getAttributes().size();
         for (int currentAttributeIndex = 0; currentAttributeIndex < limit; currentAttributeIndex++) {
             extractFloatValueForAttribute(mixedValues, floatValues, currentAttributeIndex);
         }
@@ -47,10 +47,10 @@ public class Instance {
 
     private void extractFloatValueForAttribute(ArrayList<String> mixedValues, ArrayList<Float> floatValues,
                                                int currentAttributeIndex) {
-        if (attributes.get(currentAttributeIndex).getType().equals(AttributeType.NUMERIC))
+        if (getAttributes().get(currentAttributeIndex).getType().equals(AttributeType.NUMERIC))
             floatValues.add(currentAttributeIndex, Float.valueOf(mixedValues.get(currentAttributeIndex)));
-        else if (attributes.get(currentAttributeIndex).getType().equals(AttributeType.NOMINAL)) {
-            floatValues.add(currentAttributeIndex, attributes.get(currentAttributeIndex).getNumericValue((
+        else if (getAttributes().get(currentAttributeIndex).getType().equals(AttributeType.NOMINAL)) {
+            floatValues.add(currentAttributeIndex, getAttributes().get(currentAttributeIndex).getNumericValue((
                      (mixedValues.get(currentAttributeIndex)))));
         } else {
             floatValues.add(currentAttributeIndex, null);
