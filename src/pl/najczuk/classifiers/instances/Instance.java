@@ -11,9 +11,15 @@ public class Instance {
     private ArrayList<Attribute> attributes;
     private ArrayList<Float> values;
 
-    public Instance(ArrayList<Attribute> attributes, ArrayList<String> values) {
+    public Instance(ArrayList<Attribute> attributes, ArrayList values) {
         setAttributes( attributes);
-        setValues(getFloatValuesFromObjects(values));
+
+        if(values.get(0).getClass().equals(Float.class)){
+            setValues(values);
+        }
+        else if(values.get(0).getClass().equals(String.class)) {
+            setValues(getFloatValuesFromObjects(values));
+        }
 
     }
 

@@ -11,10 +11,15 @@ public class Instances {
     private ArrayList<Instance> instances;
     private ArrayList<Attribute> attributes;
 
-
-    public Instances(ArrayList<Attribute> attributes, ArrayList<ArrayList<String>> stringValuesArray) {
+    public Instances(ArrayList<Attribute> attributes, ArrayList inputArray) {
         setAttributes(attributes);
-        setInstances(getInstancesFromObjectTwoDimArray(stringValuesArray));
+        if(inputArray.get(0).getClass().equals(ArrayList.class)){
+            setInstances(getInstancesFromObjectTwoDimArray(inputArray));
+        }
+        else if(inputArray.get(0).getClass().equals(Instance.class)) {
+            setInstances(inputArray);
+        }
+
     }
 
     public ArrayList<Float> getNumericAttributeValues(Attribute attribute) {
@@ -43,7 +48,9 @@ public class Instances {
         return null;
     }
 
-
+    public Integer getSize(){
+        return getInstances().size();
+    }
     public ArrayList<Instance> getInstances() {
         return instances;
     }
