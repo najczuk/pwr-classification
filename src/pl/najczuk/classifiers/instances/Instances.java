@@ -11,15 +11,9 @@ public class Instances {
     private ArrayList<Instance> instances;
     private ArrayList<Attribute> attributes;
 
-    public Instances(ArrayList<Attribute> attributes, ArrayList inputArray) {
+    public Instances(ArrayList<Attribute> attributes, ArrayList<ArrayList<String>> inputArray) {
         setAttributes(attributes);
-        if(inputArray.get(0).getClass().equals(ArrayList.class)){
-            setInstances(getInstancesFromObjectTwoDimArray(inputArray));
-        }
-        else if(inputArray.get(0).getClass().equals(Instance.class)) {
-            setInstances(inputArray);
-        }
-
+        setInstances(getInstancesFromObjectTwoDimArray(inputArray));
     }
 
     public ArrayList<Float> getNumericAttributeValues(Attribute attribute) {
@@ -48,9 +42,10 @@ public class Instances {
         return null;
     }
 
-    public Integer getSize(){
+    public Integer getSize() {
         return getInstances().size();
     }
+
     public ArrayList<Instance> getInstances() {
         return instances;
     }
@@ -80,9 +75,25 @@ public class Instances {
 
     @Override
     public String toString() {
-        return "Instances{" +
-                "instances=" + instances +
-                ", attributes=" + attributes +
-                '}';
+        int attributeIndex = 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Attribute attribute : getAttributes()) {
+            stringBuilder.append(attribute.getName());
+            stringBuilder.append("\t");
+        }
+        stringBuilder.append("\n");
+        for (Instance instance : getInstances()) {
+            attributeIndex = 0;
+            for (Attribute attribute : getAttributes()) {
+                if (attribute.getType().equals(AttributeType.NOMINAL))
+                    stringBuilder.append(attribute.getNominalValue(instance.getValues().get(attributeIndex)));
+                else
+                    stringBuilder.append(instance.getValues().get(attributeIndex));
+                stringBuilder.append("\t");
+                attributeIndex++;
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 }

@@ -54,7 +54,6 @@ public class ArffReader {
         ArrayList<Attribute> attributes = extractAttributesFromFile();
         ArrayList<ArrayList<String>> instancesData = extractInstancesDataFromFile(attributes);
         Instances instances = new Instances(attributes, instancesData);
-        System.out.println(instances.getInstances().size() + "<----");
 
 
         return instances;
@@ -74,7 +73,6 @@ public class ArffReader {
         Matcher dataTagMatcher;
         ArrayList<ArrayList<String>> instancesData = new ArrayList<ArrayList<String>>();
         boolean fileCursorBelowDataTag = false;
-        int counter = 0;
         while (in.hasNextLine()) {
             line = in.nextLine();
             dataTagMatcher = dataTagPattern.matcher(line);
@@ -83,15 +81,10 @@ public class ArffReader {
                 continue;
             }
             if (fileCursorBelowDataTag) {
-                counter++;
                 String[] instanceData = line.split(",");
-                Arrays.toString(instanceData);
                 instancesData.add(new ArrayList<String>(Arrays.asList(instanceData)));
             }
         }
-
-        System.out.println(counter);
-
         return instancesData;
     }
 

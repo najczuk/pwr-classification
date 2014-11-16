@@ -8,9 +8,10 @@ public class Main {
 
     public static void main(String[] args) {
         ArffReader arffReader= new ArffReader("D:\\workspace\\pwr\\pwr-classification\\datasets\\glass.arff");
-        System.out.println(arffReader.getInstances().getNumericAttributeValues(arffReader.getInstances()
-                .getAttributes().get(1)));
-        EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(5,arffReader.getInstances());
+//        System.out.println(arffReader.getInstances().getNumericAttributeValues(arffReader.getInstances()
+//                .getAttributes().get(1)));
+//        EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(5,arffReader.getInstances());
+        EqualFrequencyDiscretizer equalWidthDiscretizer = new EqualFrequencyDiscretizer(5,arffReader.getInstances());
         equalWidthDiscretizer.discretizeNumericAttributes();
     }
 }
