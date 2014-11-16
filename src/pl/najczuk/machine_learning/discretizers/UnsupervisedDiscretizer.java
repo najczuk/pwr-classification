@@ -1,9 +1,9 @@
-package pl.najczuk.classifiers.discretizers;
+package pl.najczuk.machine_learning.discretizers;
 
-import pl.najczuk.classifiers.instances.Attribute;
-import pl.najczuk.classifiers.instances.AttributeType;
-import pl.najczuk.classifiers.instances.Instance;
-import pl.najczuk.classifiers.instances.Instances;
+import pl.najczuk.machine_learning.instances.Attribute;
+import pl.najczuk.machine_learning.instances.AttributeType;
+import pl.najczuk.machine_learning.instances.Instance;
+import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +49,7 @@ public abstract class UnsupervisedDiscretizer {
 
 
         for (Attribute currentAttribute : originalAttributes) {
+            System.out.println(currentAttribute.getName());
             if (currentAttribute.getType().equals(AttributeType.NUMERIC)) {
 
                 ArrayList<Float> attributeValues = inputInstances.getNumericAttributeValues(currentAttribute);
@@ -58,6 +59,7 @@ public abstract class UnsupervisedDiscretizer {
                 columnarNominalValues.add(getNominalRepresentationOfNumericValues(attributeValues, intervalRanges));
             } else
                 nominalAttributes.add(currentAttribute);
+            System.out.println(nominalAttributes.get(nominalAttributes.size()-1).getNominalValuesMap());
 
         }
 

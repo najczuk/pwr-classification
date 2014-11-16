@@ -1,6 +1,6 @@
-package pl.najczuk.classifiers.discretizers;
+package pl.najczuk.machine_learning.discretizers;
 
-import pl.najczuk.classifiers.instances.Instances;
+import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.*;
 
@@ -25,15 +25,13 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
 
         for (int currentBinIndex = 0; currentBinIndex < numberOfBins; currentBinIndex++) {
 
-            Float lowerRangeLimit = currentBinIndex == 0 ? Float.NEGATIVE_INFINITY : attributeValues.get
-                    (currentBinIndex*frequency);
-            Float upperRangeLimit = currentBinIndex == getNumberOfBins() - 1 ? Float.POSITIVE_INFINITY : attributeValues.get
-                    ((currentBinIndex+1)*frequency);
-//                            * interval);
+            Float lowerRangeLimit;
+            Float upperRangeLimit;
 
-            intervalRanges.add(new ArrayList<>(Arrays.asList(lowerRangeLimit, upperRangeLimit)));
+//            intervalRanges.add(new ArrayList<>(Arrays.asList(lowerRangeLimit, upperRangeLimit)));
         }
 
-        return intervalRanges;
+        return intervalRanges; //TODO wychodzi malo binow dla niektorych atrybutow, sprawdz recznie jak to wychodzi
+        // przy distinct
     }
 }

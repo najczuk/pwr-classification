@@ -1,14 +1,9 @@
-package pl.najczuk.classifiers.discretizers;
+package pl.najczuk.machine_learning.discretizers;
 
-import pl.najczuk.classifiers.instances.Attribute;
-import pl.najczuk.classifiers.instances.AttributeType;
-import pl.najczuk.classifiers.instances.Instance;
-import pl.najczuk.classifiers.instances.Instances;
+import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * User: Adrian

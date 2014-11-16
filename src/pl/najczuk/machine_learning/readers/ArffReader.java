@@ -1,8 +1,8 @@
-package pl.najczuk.classifiers.readers;
+package pl.najczuk.machine_learning.readers;
 
 import com.sun.deploy.util.StringUtils;
-import pl.najczuk.classifiers.instances.Attribute;
-import pl.najczuk.classifiers.instances.Instances;
+import pl.najczuk.machine_learning.instances.Attribute;
+import pl.najczuk.machine_learning.instances.Instances;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
