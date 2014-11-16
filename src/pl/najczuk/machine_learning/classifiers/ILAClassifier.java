@@ -31,10 +31,10 @@ public class ILAClassifier {
 
         Integer[] classToSubArrayIndexMap = new Integer[attributesCount];
 //        ArrayList<Integer> subArraysClassValues = new ArrayList<>();
-        ArrayList<ArrayList<Float[]>> classSubArrays = new ArrayList<>();
+        ArrayList<ArrayList<Double[]>> classSubArrays = new ArrayList<>();
 
         Instance currentInstance;
-        ArrayList<Float> currentInstanceValues;
+        ArrayList<Double> currentInstanceValues;
         Integer currentClassValue;
         int currentSubArrayIndex;
 
@@ -42,17 +42,18 @@ public class ILAClassifier {
              currentTrainingInstanceIndex++) {
             currentInstance = trainingInstances.getInstances().get(currentTrainingInstanceIndex);
             currentInstanceValues = currentInstance.getValues();
-            currentClassValue = Math.round(currentInstanceValues.get(classAttributeIndex));
-
+            currentClassValue = currentInstanceValues.get(classAttributeIndex).intValue();
+//            System.out.println(classToSubArrayIndexMap[currentClassValue] + "-" + currentClassValue);
             if (classToSubArrayIndexMap[currentClassValue] == null) {
-                currentSubArrayIndex = getIndexOfNewSubarray(classSubArrays);
-                classToSubArrayIndexMap[currentClassValue] = currentSubArrayIndex;
-                ArrayList<Float[]> subArrayInstances = new ArrayList<>();
-                subArrayInstances.add(arrayListToFloatArray(attributesCount, currentInstanceValues));
+                ArrayList<Double[]> subArrayInstances = new ArrayList<>();
+                subArrayInstances.add(arrayListToDoubleArray(attributesCount, currentInstanceValues));
                 classSubArrays.add(subArrayInstances);
+
+                currentSubArrayIndex = getIndexOfNewSubArray(classSubArrays);
+                classToSubArrayIndexMap[currentClassValue] = currentSubArrayIndex;
             } else {
                 currentSubArrayIndex = classToSubArrayIndexMap[currentClassValue];
-                classSubArrays.get(currentSubArrayIndex).add(arrayListToFloatArray(attributesCount, currentInstanceValues));
+                classSubArrays.get(currentSubArrayIndex).add(arrayListToDoubleArray(attributesCount, currentInstanceValues));
             }
         }
         subsetsCount=classSubArrays.size();
@@ -66,12 +67,12 @@ public class ILAClassifier {
 
     }
 
-    private Float[] arrayListToFloatArray(int attributesCount, ArrayList<Float> currentInstanceValues) {
-        return currentInstanceValues.toArray(new Float[attributesCount]);
+    private Double[] arrayListToDoubleArray(int attributesCount, ArrayList<Double> currentInstanceValues) {
+        return currentInstanceValues.toArray(new Double[attributesCount]);
     }
 
-    private int getIndexOfNewSubarray(ArrayList<ArrayList<Float[]>> classSubarrays) {
-        return classSubarrays.size() - 1;
+    private int getIndexOfNewSubArray(ArrayList<ArrayList<Double[]>> classSubArrays) {
+        return classSubArrays.size() - 1;
     }
 
     public Instances getTrainingInstances() {

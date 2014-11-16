@@ -16,8 +16,8 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
     }
 
     @Override
-    protected ArrayList<ArrayList<Float>> getIntervalRangesForNumericAttribute(ArrayList<Float> attributeValues) {
-        ArrayList<ArrayList<Float>> intervalRanges = new ArrayList<>();
+    protected ArrayList<ArrayList<Double>> getIntervalRangesForNumericAttribute(ArrayList<Double> attributeValues) {
+        ArrayList<ArrayList<Double>> intervalRanges = new ArrayList<>();
         sortNumericValues(attributeValues);
         int frequency;
         frequency = attributeValues.size() / getNumberOfBins();
@@ -25,8 +25,8 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
 
         for (int currentBinIndex = 0; currentBinIndex < numberOfBins; currentBinIndex++) {
 
-            Float lowerRangeLimit;
-            Float upperRangeLimit;
+            Double lowerRangeLimit;
+            Double upperRangeLimit;
 
 //            intervalRanges.add(new ArrayList<>(Arrays.asList(lowerRangeLimit, upperRangeLimit)));
         }

@@ -9,16 +9,16 @@ import java.util.ArrayList;
  */
 public class Instance {
     private ArrayList<Attribute> attributes;
-    private ArrayList<Float> values;
+    private ArrayList<Double> values;
 
     public Instance(ArrayList<Attribute> attributes, ArrayList values) {
         setAttributes( attributes);
 
-        if(values.get(0).getClass().equals(Float.class)){
+        if(values.get(0).getClass().equals(Double.class)){
             setValues(values);
         }
         else if(values.get(0).getClass().equals(String.class)) {
-            setValues(getFloatValuesFromObjects(values));
+            setValues(getDoubleValuesFromObjects(values));
         }
 
     }
@@ -31,35 +31,35 @@ public class Instance {
         this.attributes = attributes;
     }
 
-    public ArrayList<Float> getValues() {
+    public ArrayList<Double> getValues() {
         return values;
     }
 
-    public void setValues(ArrayList<Float> values) {
+    public void setValues(ArrayList<Double> values) {
         this.values = values;
     }
 
 
 
-    private ArrayList<Float> getFloatValuesFromObjects(ArrayList<String> mixedValues) {
-        ArrayList<Float> floatValues = new ArrayList<Float>();
+    private ArrayList<Double> getDoubleValuesFromObjects(ArrayList<String> mixedValues) {
+        ArrayList<Double> doubleValues = new ArrayList<>();
         int limit = getAttributes().size();
         for (int currentAttributeIndex = 0; currentAttributeIndex < limit; currentAttributeIndex++) {
-            extractFloatValueForAttribute(mixedValues, floatValues, currentAttributeIndex);
+            extractDoubleValueForAttribute(mixedValues, doubleValues, currentAttributeIndex);
         }
-        return floatValues;
+        return doubleValues;
 
     }
 
-    private void extractFloatValueForAttribute(ArrayList<String> mixedValues, ArrayList<Float> floatValues,
-                                               int currentAttributeIndex) {
+    private void extractDoubleValueForAttribute(ArrayList<String> mixedValues, ArrayList<Double> doubleValues,
+                                                int currentAttributeIndex) {
         if (getAttributes().get(currentAttributeIndex).getType().equals(AttributeType.NUMERIC))
-            floatValues.add(currentAttributeIndex, Float.valueOf(mixedValues.get(currentAttributeIndex)));
+            doubleValues.add(currentAttributeIndex, Double.valueOf(mixedValues.get(currentAttributeIndex)));
         else if (getAttributes().get(currentAttributeIndex).getType().equals(AttributeType.NOMINAL)) {
-            floatValues.add(currentAttributeIndex, getAttributes().get(currentAttributeIndex).getNumericValue((
-                     (mixedValues.get(currentAttributeIndex)))));
+            doubleValues.add(currentAttributeIndex, getAttributes().get(currentAttributeIndex).getNumericValue((
+                    (mixedValues.get(currentAttributeIndex)))));
         } else {
-            floatValues.add(currentAttributeIndex, null);
+            doubleValues.add(currentAttributeIndex, null);
         }
     }
 

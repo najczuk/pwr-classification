@@ -11,9 +11,9 @@ import java.util.ArrayList;
  */
 public class Rule {
     private ArrayList<Attribute> ruleAttributes;
-    private ArrayList<Float> ruleAttributeValues;
+    private ArrayList<Double> ruleAttributeValues;
 
-    public Rule(ArrayList<Attribute> ruleAttributes, ArrayList<Float> ruleAttributeValues) {
+    public Rule(ArrayList<Attribute> ruleAttributes, ArrayList<Double> ruleAttributeValues) {
         this.ruleAttributes = ruleAttributes;
         this.ruleAttributeValues = ruleAttributeValues;
     }

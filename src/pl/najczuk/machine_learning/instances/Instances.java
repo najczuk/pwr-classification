@@ -16,17 +16,17 @@ public class Instances {
         setInstances(getInstancesFromObjectTwoDimArray(inputArray));
     }
 
-    public ArrayList<Float> getNumericAttributeValues(Attribute attribute) {
+    public ArrayList<Double> getNumericAttributeValues(Attribute attribute) {
         if (attribute.getType().equals(AttributeType.NUMERIC)) {
-            ArrayList<Float> numericAttributeValues = getFloatValuesForAttribute(getAttributeIndex(attribute));
+            ArrayList<Double> numericAttributeValues = getDoubleValuesForAttribute(getAttributeIndex(attribute));
             return numericAttributeValues;
         }
 
         return null;
     }
 
-    private ArrayList<Float> getFloatValuesForAttribute(Integer attributeIndex) {
-        ArrayList<Float> numericAttributeValues = new ArrayList<Float>();
+    private ArrayList<Double> getDoubleValuesForAttribute(Integer attributeIndex) {
+        ArrayList<Double> numericAttributeValues = new ArrayList<Double>();
         for (int i = 0; i < getInstances().size(); i++) {
             numericAttributeValues.add(instances.get(i).getValues().get(attributeIndex));
         }

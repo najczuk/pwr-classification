@@ -52,9 +52,9 @@ public abstract class UnsupervisedDiscretizer {
             System.out.println(currentAttribute.getName());
             if (currentAttribute.getType().equals(AttributeType.NUMERIC)) {
 
-                ArrayList<Float> attributeValues = inputInstances.getNumericAttributeValues(currentAttribute);
-                ArrayList<Float> copyOfAttrValues = (ArrayList<Float>) attributeValues.clone();
-                ArrayList<ArrayList<Float>> intervalRanges = getIntervalRangesForNumericAttribute(copyOfAttrValues);
+                ArrayList<Double> attributeValues = inputInstances.getNumericAttributeValues(currentAttribute);
+                ArrayList<Double> copyOfAttrValues = (ArrayList<Double>) attributeValues.clone();
+                ArrayList<ArrayList<Double>> intervalRanges = getIntervalRangesForNumericAttribute(copyOfAttrValues);
                 nominalAttributes.add(createNominalAttributeFromIntervalRanges(currentAttribute.getName(), intervalRanges));
                 columnarNominalValues.add(getNominalRepresentationOfNumericValues(attributeValues, intervalRanges));
             } else
@@ -124,12 +124,12 @@ public abstract class UnsupervisedDiscretizer {
                 .getValues().get(origAttrIndex));
     }
 
-    private ArrayList<String> getNominalRepresentationOfNumericValues(ArrayList<Float> attributeValues,
-                                                                      ArrayList<ArrayList<Float>> intervalRanges) {
+    private ArrayList<String> getNominalRepresentationOfNumericValues(ArrayList<Double> attributeValues,
+                                                                      ArrayList<ArrayList<Double>> intervalRanges) {
         ArrayList<String> nominalRepresentationStrings = new ArrayList<>();
-        Float lowerRangeLimit, upperRangeLimit;
-        for (Float attributeValue : attributeValues) {
-            for (ArrayList<Float> intervalRange : intervalRanges) {
+        Double lowerRangeLimit, upperRangeLimit;
+        for (Double attributeValue : attributeValues) {
+            for (ArrayList<Double> intervalRange : intervalRanges) {
 
                 lowerRangeLimit = intervalRange.get(0);
                 upperRangeLimit = intervalRange.get(1);
@@ -145,12 +145,12 @@ public abstract class UnsupervisedDiscretizer {
         return nominalRepresentationStrings;
     }
 
-    private Attribute createNominalAttributeFromIntervalRanges(String attributeName, ArrayList<ArrayList<Float>>
+    private Attribute createNominalAttributeFromIntervalRanges(String attributeName, ArrayList<ArrayList<Double>>
             intervalRanges) {
         ArrayList<String> nominalValues = new ArrayList<>();
 
 
-        for (ArrayList<Float> currentIntervalRange : intervalRanges) {
+        for (ArrayList<Double> currentIntervalRange : intervalRanges) {
             String nominalValue = getNominalRangeStringRepresentation(currentIntervalRange);
             nominalValues.add(nominalValue);
         }
@@ -159,30 +159,30 @@ public abstract class UnsupervisedDiscretizer {
         return attribute;
     }
 
-    private String getNominalRangeStringRepresentation(ArrayList<Float> intervalRange) {
-        Float lowerRangeLimit, upperRangeLimit;
+    private String getNominalRangeStringRepresentation(ArrayList<Double> intervalRange) {
+        Double lowerRangeLimit, upperRangeLimit;
         lowerRangeLimit = intervalRange.get(0);
         upperRangeLimit = intervalRange.get(1);
         return "[" + lowerRangeLimit + "," + upperRangeLimit + ")";
     }
 
-    protected abstract ArrayList<ArrayList<Float>> getIntervalRangesForNumericAttribute(ArrayList<Float>
+    protected abstract ArrayList<ArrayList<Double>> getIntervalRangesForNumericAttribute(ArrayList<Double>
                                                                                                 attributeValues);
 
-    protected Float getMinValue(ArrayList<Float> attributeValues) {
+    protected Double getMinValue(ArrayList<Double> attributeValues) {
         return attributeValues.get(0);
     }
 
-    protected Float getMaxValue(ArrayList<Float> attributeValues) {
+    protected Double getMaxValue(ArrayList<Double> attributeValues) {
         return attributeValues.get(attributeValues.size() - 1);
     }
 
-    protected void sortNumericValues(ArrayList<Float> numericAttributeValues) {
-        HashSet<Float> hashSet = new HashSet(numericAttributeValues);
-        ArrayList<Float> arrayList = new ArrayList<>(hashSet);
-        Collections.sort(arrayList, new Comparator<Float>() {
+    protected void sortNumericValues(ArrayList<Double> numericAttributeValues) {
+        HashSet<Double> hashSet = new HashSet(numericAttributeValues);
+        ArrayList<Double> arrayList = new ArrayList<>(hashSet);
+        Collections.sort(arrayList, new Comparator<Double>() {
             @Override
-            public int compare(Float o1, Float o2) {
+            public int compare(Double o1, Double o2) {
                 return o1.compareTo(o2);
             }
         });

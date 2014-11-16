@@ -10,7 +10,7 @@ import java.util.*;
 public class Attribute {
     private String name;
     private AttributeType type;
-    private HashMap<String,Float> nominalValuesMap;
+    private HashMap<String,Double> nominalValuesMap;
 
     public Attribute(String name) {
         this.name = name;
@@ -39,24 +39,24 @@ public class Attribute {
         this.type = type;
     }
 
-    public HashMap<String, Float> getNominalValuesMap() {
+    public HashMap<String, Double> getNominalValuesMap() {
         return nominalValuesMap;
     }
 
-    public void setNominalValuesMap(HashMap<String, Float> nominalValuesMap) {
+    public void setNominalValuesMap(HashMap<String, Double> nominalValuesMap) {
         this.nominalValuesMap = nominalValuesMap;
     }
 
-    public Float getNumericValue(String nominalValue){
-        Float numericValue = nominalValuesMap.get(nominalValue);
+    public Double getNumericValue(String nominalValue){
+        Double numericValue = nominalValuesMap.get(nominalValue);
         return numericValue;
     }
 
-    public String getNominalValue(Float numericValue){
+    public String getNominalValue(Double numericValue){
         Set entries = nominalValuesMap.entrySet();
-        Iterator<Map.Entry<String,Float>> entriesIterator = entries.iterator();
+        Iterator<Map.Entry<String,Double>> entriesIterator = entries.iterator();
 
-        Map.Entry<String,Float> entry;
+        Map.Entry<String,Double> entry;
         while(entriesIterator.hasNext()){
             entry=entriesIterator.next();
             if(entry.getValue().equals(numericValue))
@@ -95,9 +95,9 @@ public class Attribute {
                 '}';
     }
 
-    private HashMap<String,Float> getNominalValuesMapFromArray(ArrayList<String> nominalValuesArray){
-        HashMap<String,Float> nominalValuesMap = new HashMap<String, Float>();
-        Float nominalAttributeValue = new Float(0);
+    private HashMap<String,Double> getNominalValuesMapFromArray(ArrayList<String> nominalValuesArray){
+        HashMap<String,Double> nominalValuesMap = new HashMap<String, Double>();
+        Double nominalAttributeValue = new Double(0);
         for (String nominalValue:nominalValuesArray) {
             nominalValuesMap.put(nominalValue,nominalAttributeValue);
             nominalAttributeValue +=1;
