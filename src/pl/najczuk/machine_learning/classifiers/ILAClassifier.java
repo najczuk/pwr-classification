@@ -24,49 +24,18 @@ public class ILAClassifier {
     private void trainClassifier() {
         Instances trainingInstances = getTrainingInstances();
         ArrayList<Attribute> attributes = trainingInstances.getAttributes();
-
-        int subArrayCount;
-        int trainingInstancesSize = trainingInstances.getSize();
-        int attributesCount = attributes.size();
-        int nonClassAttributesCount = attributesCount-1;
-        int classAttributeIndex = attributesCount - 1;
-
-        Integer[] classToSubArrayIndexMap = new Integer[attributesCount];
-        ArrayList<ArrayList<Integer[]>> classSubArrays = new ArrayList<>();
-
-        generateILASubArrays(trainingInstances, trainingInstancesSize, attributesCount, classAttributeIndex, classToSubArrayIndexMap, classSubArrays);
-        subArrayCount = classSubArrays.size();
-
-//        ------------------------------------------------------
+        ArrayList<ArrayList<Integer[]>> classPartitions = getILASubArrays(trainingInstances);
+        printClassSubArrays(classPartitions);
 
 
-        for (int subArrayIndex = 0; subArrayIndex < subArrayCount; subArrayIndex++) {
-            ArrayList<Integer[]> subArray = classSubArrays.get(subArrayIndex);
-            int instancesCount = subArray.size();
-            int checkedInstancesCount =0;
-            boolean[] checkedInstances = new boolean[instancesCount];
-            int attributeCombinationSize=1;
-            ArrayList<Integer[]> combinations;
+    }
 
-            while (instancesCount==checkedInstancesCount) {
-                combinations=generateCombinations(nonClassAttributesCount,attributeCombinationSize);
-                int maxCombinationRank =0;
-                Integer[] maxCombinationAttributes;
-                Integer[] maxCombinationValues;
-
-
-                for (int combinationIndex = 0; combinationIndex < combinations.size(); combinationIndex++) {
-                    Integer[] combination =combinations.get(combinationIndex);
-                    for (int instanceIndex = 0; instanceIndex < instancesCount; instanceIndex++) {
-                        Integer[] instanceValues = subArray.get(instanceIndex);
-                        Integer[] combinationValues = getValuesForCurrentCombination(attributeCombinationSize,
-                                instanceValues,combination);
-                    }
-
-                }
+    private void printClassSubArrays(ArrayList<ArrayList<Integer[]>> classSubArrays) {
+        for (int i = 0; i < classSubArrays.size(); i++) {
+            for (int j = 0; j < classSubArrays.get(i).size(); j++) {
+                System.out.println(Arrays.deepToString(classSubArrays.get(i).get(j)));
             }
-
-
+            System.out.println();
         }
     }
 
@@ -128,13 +97,18 @@ public class ILAClassifier {
         return isNotUnique;
     }
 
-    private void generateILASubArrays(Instances trainingInstances, int trainingInstancesSize, int attributesCount,
-                                      int classAttributeIndex, Integer[] classToSubArrayIndexMap,
-                                      ArrayList<ArrayList<Integer[]>> classSubArrays) {
+    private ArrayList<ArrayList<Integer[]>> getILASubArrays(Instances trainingInstances) {
+
+        int trainingInstancesSize = trainingInstances.getSize();
+        int attributesCount = trainingInstances.getAttributes().size();
+        int classAttributeIndex = attributesCount - 1;
+        Integer[] classToSubArrayIndexMap = new Integer[attributesCount];
+        ArrayList<ArrayList<Integer[]>> classSubArrays = new ArrayList<>();
+
+        int currentSubArrayIndex;
+        Integer currentClassValue;
         Instance currentInstance;
         ArrayList<Double> currentInstanceValues;
-        Integer currentClassValue;
-        int currentSubArrayIndex;
 
 
         for (int currentTrainingInstanceIndex = 0; currentTrainingInstanceIndex < trainingInstancesSize;
@@ -142,7 +116,6 @@ public class ILAClassifier {
             currentInstance = trainingInstances.getInstances().get(currentTrainingInstanceIndex);
             currentInstanceValues = currentInstance.getValues();
             currentClassValue = currentInstanceValues.get(classAttributeIndex).intValue();
-//            System.out.println(classToSubArrayIndexMap[currentClassValue] + "-" + currentClassValue);
             if (classToSubArrayIndexMap[currentClassValue] == null) {
                 ArrayList<Integer[]> subArrayInstances = new ArrayList<>();
                 subArrayInstances.add(doubleValuesToIntegerArray(attributesCount, currentInstanceValues));
@@ -155,6 +128,7 @@ public class ILAClassifier {
                 classSubArrays.get(currentSubArrayIndex).add(doubleValuesToIntegerArray(attributesCount, currentInstanceValues));
             }
         }
+        return classSubArrays;
     }
 
     private Integer[] doubleValuesToIntegerArray(int attributesCount, ArrayList<Double> currentInstanceValues) {
