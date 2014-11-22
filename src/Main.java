@@ -8,7 +8,7 @@ public class Main {
 //        generateCombinations(4,2);
 //        generateCombinations(4,3);
 //        generateCombinations(4,4);
-        Integer[][] parititon1 = {{0, 0, 0, 0}, {1, 1, 2, 0}, {2, 2, 3, 0}, {2, 2, 2, 0}};
+        Integer[][] parititon1 = {{0, 0, 0, 0}, {1, 1, 2, 0}, {2, 2, 3, 0}, {2, 2, 2, 0}, {2, 2, 2, 0}};
         Integer[][] parititon2 = {{1, 1, 1, 1}, {2, 1, 1, 1}, {2, 1, 3, 1}};
 
         ArrayList<Integer[]> par1 = new ArrayList<>();
@@ -16,6 +16,7 @@ public class Main {
         par1.add(parititon1[1]);
         par1.add(parititon1[2]);
         par1.add(parititon1[3]);
+        par1.add(parititon1[4]);
         ArrayList<Integer[]> par2 = new ArrayList<>();
         par2.add(parititon2[0]);
         par2.add(parititon2[1]);
@@ -38,12 +39,14 @@ public class Main {
 //            System.out.println(i + ": " + instancesWithValues.get(i));
 //        }
         //getCombinationValesGroups
+        int mainPartitionIndex = 0;
         Integer[] combination = {0};
-        boolean[] classifiedInstances = {false,false,false,false};
-        getCombinationValuesGroups(combination,partitions.get(1),classifiedInstances);
+        boolean[] classifiedInstances = {false, false, false, false, false};
+        ArrayList<ArrayList<Integer>> combinationValuesGroups = getCombinationValuesGroups(combination,
+                partitions.get(mainPartitionIndex), classifiedInstances);
+        removeDuplicatesFromCombinationValuesGroups(combination, combinationValuesGroups,mainPartitionIndex,partitions);
 
-
-
+//        ArrayList<Integer[]> combinations = generateCombinations(3, 1);
 
 
 //        ArffReader arffReader= new ArffReader("D:\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
@@ -55,19 +58,96 @@ public class Main {
 
     }
 
+    public static ArrayList<ArrayList<Integer>> removeDuplicatesFromCombinationValuesGroups
+            (Integer[] combination,
+             ArrayList<ArrayList<Integer>> combinationValuesGroups,
+             int mainPartitionIndex,
+             ArrayList<ArrayList<Integer[]>> allPartitions) {
+
+        ArrayList<Integer> duplicatedGroups = new ArrayList<>();
+        ArrayList<Integer[]> mainPartition = allPartitions.get(mainPartitionIndex);
+        for (int valueGroupI = 0; valueGroupI < combinationValuesGroups.size(); valueGroupI++) {
+            Integer groupInstanceRepresentantIndex = combinationValuesGroups.get(valueGroupI).get(0);
+            Integer[] groupValues = mainPartition.get(groupInstanceRepresentantIndex);
+            boolean groupHasDuplicates = groupHasDuplicates(combination, mainPartitionIndex, allPartitions, groupValues);
+            if (groupHasDuplicates) {
+                duplicatedGroups.add(valueGroupI);
+            }
+        }
+        ArrayList<ArrayList<Integer>> deduplicatedCombinationValuesGroups = new ArrayList<>();
+        for (int valueGroupI = 0; valueGroupI < combinationValuesGroups.size(); valueGroupI++) {
+            boolean isDuplicatedGroup = isOnDuplicatedGroupsList(duplicatedGroups, valueGroupI);
+            if (!isDuplicatedGroup) {
+                deduplicatedCombinationValuesGroups.add(combinationValuesGroups.get(valueGroupI));
+                System.out.println("Deduplicated combination: " + Arrays.toString(combination) + " Values: " + Arrays
+                        .toString
+                        (mainPartition.get(combinationValuesGroups.get(valueGroupI).get(0))) + " Instances: "  +
+                                Arrays.toString(combinationValuesGroups.get(valueGroupI).toArray()) );
+            }
+        }
+        return deduplicatedCombinationValuesGroups;
+    }
+
+    private static boolean isOnDuplicatedGroupsList(ArrayList<Integer> duplicatedGroups, int groupIndex) {
+        boolean isDuplicatedGroup = false;
+        for (int duplicatedGroupI = 0; duplicatedGroupI < duplicatedGroups.size(); duplicatedGroupI++) {
+            if (duplicatedGroups.get(duplicatedGroupI) == groupIndex) {
+                isDuplicatedGroup = true;
+                break;
+            }
+        }
+        return isDuplicatedGroup;
+    }
+
+    private static boolean groupHasDuplicates(Integer[] combination, int mainPartitionIndex,
+                                              ArrayList<ArrayList<Integer[]>> allPartitions, Integer[] groupValues) {
+        boolean groupHasDuplicates = false;
+        outer_loop:
+        for (int partitionI = 0; partitionI < allPartitions.size(); partitionI++) {
+            if (partitionI == mainPartitionIndex)
+                continue;
+            ArrayList<Integer[]> partition = allPartitions.get(partitionI);
+            for (int instanceI = 0; instanceI < partition.size(); instanceI++) {
+                Integer[] currentInstanceValues = partition.get(instanceI);
+
+                boolean instanceIsEqual = instancesEqualForTheCombination(combination, groupValues,
+                        currentInstanceValues);
+                if (instanceIsEqual) {
+                    groupHasDuplicates = true;
+                    break outer_loop;
+                }
+            }
+        }
+        return groupHasDuplicates;
+    }
+
+    private static boolean instancesEqualForTheCombination(Integer[] combination, Integer[] instance1,
+                                                           Integer[] instance2) {
+        boolean isInstanceEqual = true;
+        for (int attribute = 0; attribute < combination.length; attribute++) {
+            if (instance1[attribute] != instance2[attribute]) {
+                isInstanceEqual = false;
+                break;
+            }
+        }
+        return isInstanceEqual;
+    }
+
     public static ArrayList<ArrayList<Integer>> getCombinationValuesGroups(Integer[] combination, ArrayList<Integer[]> partition,
                                                                            boolean[] classifiedInstances) {
 
         ArrayList<ArrayList<Integer>> instancesGroupsWithEqualCombinationValues = new ArrayList<>();
         boolean[] instanceAlreadyAdded = new boolean[partition.size()];
-        for (int instanceI = 0; instanceI < partition.size() && !instanceAlreadyAdded[instanceI]; instanceI++) {
+        for (int instanceI = 0; instanceI < partition.size(); instanceI++) {
+            if (instanceAlreadyAdded[instanceI])
+                continue;
             Integer[] instance = partition.get(instanceI);
             ArrayList<Integer> instancesWithEqualValuesForCombination = getInstancesWithSameCombinationValues(combination,
                     instance, partition, classifiedInstances, instanceAlreadyAdded);
             instancesGroupsWithEqualCombinationValues.add(instancesWithEqualValuesForCombination);
 
             System.out.println("Combination: " + Arrays.toString(combination) + " Values: " + Arrays.toString
-                    (instance) + " Instances: " + Arrays.deepToString(instancesGroupsWithEqualCombinationValues.toArray())  );
+                    (instance) + " Instances: " + Arrays.deepToString(instancesWithEqualValuesForCombination.toArray()));
         }
 
         return instancesGroupsWithEqualCombinationValues;
