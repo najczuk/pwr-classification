@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) {
 //        generateCombinations(3,3);
-//        generateCombinations(4,2);
+//        generateCombinations(4,1);
 //        generateCombinations(4,3);
 //        generateCombinations(4,4);
 //        Integer[][] parititon1 = {{0, 0, 0, 0}, {1, 1, 2, 0}, {2, 2, 3, 0}, {2, 2, 2, 0}};
@@ -40,11 +40,12 @@ public class Main {
 //        Integer[] values = {2,1};
 
 
-        ArffReader arffReader= new ArffReader("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
+        ArffReader arffReader= new ArffReader("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\iris" +
+                ".arff");
         Instances instances = arffReader.getInstances();
         EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(10,instances);
         Instances discretizedInstances = equalWidthDiscretizer.discretizeNumericAttributes();
-//        ILAClassifier ilaClassifier =new ILAClassifier(discretizedInstances);
+        ILAClassifier ilaClassifier =new ILAClassifier(discretizedInstances);
 //        Integer[] maxCombination = new Integer[1];
 //
 //        boolean[] classifiedInstances = {false, false, false, false};
