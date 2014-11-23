@@ -14,9 +14,12 @@ import java.util.Arrays;
  */
 public class ILAClassifier {
     Instances trainingInstances;
+    ArrayList<Attribute> attributes;
+    Integer[] optimalCombination;
 
     public ILAClassifier(Instances trainingInstances) {
         this.trainingInstances = trainingInstances;
+        this.attributes = trainingInstances.getAttributes();
         trainClassifier();
     }
 
@@ -26,7 +29,7 @@ public class ILAClassifier {
         ArrayList<Attribute> attributes = trainingInstances.getAttributes();
         ArrayList<ArrayList<Integer[]>> classPartitions = getILASubArrays(trainingInstances);
         printClassSubArrays(classPartitions);
-        getRules(classPartitions,attributes.size()-1);
+        getRules(classPartitions, attributes.size() - 1);
 
 
     }
@@ -91,30 +94,57 @@ public class ILAClassifier {
     }
 
     private void getRules(ArrayList<ArrayList<Integer[]>> partitions, int noOfAttributes) {
+        ArrayList<Rule> rules = new ArrayList<>();
         for (int partitionI = 0; partitionI < partitions.size(); partitionI++) {
-            System.out.println("------------PARTITION "+partitionI);
+            System.out.println("------------PARTITION " + partitionI);
             int attrSpan = 1;
             ArrayList<Integer[]> combinations;
             boolean[] classifiedInstances = new boolean[partitions.get(partitionI).size()];
 
-            while (!allInstancesClassified(classifiedInstances)&&attrSpan<=noOfAttributes) {
+            while (!allInstancesClassified(classifiedInstances) && attrSpan <= noOfAttributes) {
                 Integer[] maxCombination = new Integer[attrSpan];
                 combinations = generateCombinations(noOfAttributes, attrSpan);
                 ArrayList<Integer> maxCombinationInstances = getMaxCombinationForCombinations(combinations,
                         maxCombination, partitions, partitionI, classifiedInstances);
-                for (Integer maxInstance:maxCombinationInstances){
-                    classifiedInstances[maxInstance]=true;
+                for (Integer maxInstance : maxCombinationInstances) {
+                    classifiedInstances[maxInstance] = true;
+
                 }
-                if(maxCombinationInstances.isEmpty()){
+                if (!maxCombinationInstances.isEmpty()) {
+                    System.out.println(Arrays.toString(optimalCombination));
+                    rules.add(generateRuleFromMaxCombination(partitions, partitionI, optimalCombination, maxCombinationInstances));
+                }
+                if (maxCombinationInstances.isEmpty()) {
                     attrSpan++;
                 }
             }
+
         }
+
+        System.out.println();
+        System.out.println();
+        for(Rule rule:rules){
+            System.out.println(rule);
+        }
+
+    }
+
+    private Rule generateRuleFromMaxCombination(ArrayList<ArrayList<Integer[]>> partitions, int partitionI, Integer[]
+            maxCombination, ArrayList<Integer> maxCombinationInstances) {
+        Integer representativeInstanceIndex = maxCombinationInstances.get(0);
+        Integer[] representativeInstance = partitions.get(partitionI).get(representativeInstanceIndex);
+        Integer[] ruleValues = new Integer[maxCombination.length];
+        Double instanceClassValue = representativeInstance[representativeInstance.length - 1].doubleValue();
+        for (int ruleValueI = 0; ruleValueI < maxCombination.length; ruleValueI++) {
+            ruleValues[ruleValueI] = representativeInstance[maxCombination[ruleValueI]];
+        }
+        Rule rule = new Rule(attributes, maxCombination, ruleValues, instanceClassValue);
+        return rule;
     }
 
     private boolean allInstancesClassified(boolean[] classifiedInstances) {
         for (int instanceI = 0; instanceI < classifiedInstances.length; instanceI++) {
-            if(!classifiedInstances[instanceI])
+            if (!classifiedInstances[instanceI])
                 return false;
         }
         return true;
@@ -122,10 +152,10 @@ public class ILAClassifier {
 
 
     private ArrayList<Integer> getMaxCombinationForCombinations(ArrayList<Integer[]> combinations,
-                                                                      Integer[] maxCombination,
-                                                                      ArrayList<ArrayList<Integer[]>> partitions,
-                                                                      int mainPartitionI,
-                                                                      boolean[] classifiedInstances) {
+                                                                Integer[] maxCombination,
+                                                                ArrayList<ArrayList<Integer[]>> partitions,
+                                                                int mainPartitionI,
+                                                                boolean[] classifiedInstances) {
 
         int globalMaxCombinationIndex = -1;
         int globalMaxCombinationInstancesCount = 0;
@@ -150,7 +180,8 @@ public class ILAClassifier {
             System.out.println("---->For current span max combination is: " + Arrays.toString(combinations.get
                     (globalMaxCombinationIndex)) + " for instances: " + Arrays.deepToString(globalMaxCombinationInstances
                     .toArray()));
-            maxCombination = combinations.get(globalMaxCombinationIndex).clone();
+            optimalCombination = combinations.get
+                    (globalMaxCombinationIndex);
             return globalMaxCombinationInstances;
 
         }
@@ -160,8 +191,8 @@ public class ILAClassifier {
     }
 
     private ArrayList<Integer> combinationValuesGroupWithMostOccurences(Integer[] combination,
-                                                                              ArrayList<ArrayList<Integer>>
-                                                                                      combinationValuesGroups) {
+                                                                        ArrayList<ArrayList<Integer>>
+                                                                                combinationValuesGroups) {
         int maxSize = -1;
         int maxValueGroupI = -1;
         for (int valueGroupI = 0; valueGroupI < combinationValuesGroups.size(); valueGroupI++) {
@@ -220,7 +251,7 @@ public class ILAClassifier {
     }
 
     private boolean groupHasDuplicates(Integer[] combination, int mainPartitionIndex,
-                                              ArrayList<ArrayList<Integer[]>> allPartitions, Integer[] groupValues) {
+                                       ArrayList<ArrayList<Integer[]>> allPartitions, Integer[] groupValues) {
         boolean groupHasDuplicates = false;
         outer_loop:
         for (int partitionI = 0; partitionI < allPartitions.size(); partitionI++) {
@@ -242,7 +273,7 @@ public class ILAClassifier {
     }
 
     private boolean instancesEqualForTheCombination(Integer[] combination, Integer[] instance1,
-                                                           Integer[] instance2) {
+                                                    Integer[] instance2) {
         boolean isInstanceEqual = true;
         for (int attribute = 0; attribute < combination.length; attribute++) {
             if (instance1[combination[attribute]] != instance2[combination[attribute]]) {
@@ -254,7 +285,7 @@ public class ILAClassifier {
     }
 
     private ArrayList<ArrayList<Integer>> getCombinationValuesGroups(Integer[] combination, ArrayList<Integer[]> partition,
-                                                                           boolean[] classifiedInstances) {
+                                                                     boolean[] classifiedInstances) {
 
         ArrayList<ArrayList<Integer>> instancesGroupsWithEqualCombinationValues = new ArrayList<>();
         boolean[] instanceAlreadyAdded = new boolean[partition.size()];
@@ -274,8 +305,8 @@ public class ILAClassifier {
     }
 
     private ArrayList<Integer> getInstancesWithSameCombinationValues(Integer[] combination, Integer[] values,
-                                                                           ArrayList<Integer[]> partition,
-                                                                           boolean[] classifiedInstances, boolean[]
+                                                                     ArrayList<Integer[]> partition,
+                                                                     boolean[] classifiedInstances, boolean[]
             instanceAlreadyAdded) {
         ArrayList<Integer> instancesWithValues = new ArrayList<>();
         int instanceIndex = 0;

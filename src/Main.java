@@ -40,8 +40,8 @@ public class Main {
 //        Integer[] values = {2,1};
 
 
-        ArffReader arffReader= new ArffReader("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\iris" +
-                ".arff");
+        ArffReader arffReader= new ArffReader
+                ("D:\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
         Instances instances = arffReader.getInstances();
         EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(10,instances);
         Instances discretizedInstances = equalWidthDiscretizer.discretizeNumericAttributes();
