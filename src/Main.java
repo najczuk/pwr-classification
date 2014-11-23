@@ -14,25 +14,25 @@ public class Main {
 //        generateCombinations(4,2);
 //        generateCombinations(4,3);
 //        generateCombinations(4,4);
-        Integer[][] parititon1 = {{0, 0, 0, 0}, {1, 1, 2, 0}, {2, 2, 3, 0}, {2, 2, 2, 0}};
-        Integer[][] parititon2 = {{1, 1, 1, 1}, {2, 1, 1, 1}, {2, 1, 3, 1}};
-
-        ArrayList<Integer[]> par1 = new ArrayList<>();
-        par1.add(parititon1[0]);
-        par1.add(parititon1[1]);
-        par1.add(parititon1[2]);
-        par1.add(parititon1[3]);
-//        par1.add(parititon1[4]);
-        ArrayList<Integer[]> par2 = new ArrayList<>();
-        par2.add(parititon2[0]);
-        par2.add(parititon2[1]);
-        par2.add(parititon2[2]);
-
-        ArrayList<ArrayList<Integer[]>> partitions = new ArrayList<>();
-        partitions.add(par1);
-        partitions.add(par2);
-
-        printClassSubArrays(partitions);
+//        Integer[][] parititon1 = {{0, 0, 0, 0}, {1, 1, 2, 0}, {2, 2, 3, 0}, {2, 2, 2, 0}};
+//        Integer[][] parititon2 = {{1, 1, 1, 1}, {2, 1, 1, 1}, {2, 1, 3, 1}};
+//
+//        ArrayList<Integer[]> par1 = new ArrayList<>();
+//        par1.add(parititon1[0]);
+//        par1.add(parititon1[1]);
+//        par1.add(parititon1[2]);
+//        par1.add(parititon1[3]);
+////        par1.add(parititon1[4]);
+//        ArrayList<Integer[]> par2 = new ArrayList<>();
+//        par2.add(parititon2[0]);
+//        par2.add(parititon2[1]);
+//        par2.add(parititon2[2]);
+//
+//        ArrayList<ArrayList<Integer[]>> partitions = new ArrayList<>();
+//        partitions.add(par1);
+//        partitions.add(par2);
+//
+//        printClassSubArrays(partitions);
 
 
         //------getInstancesWithSameCombinationValues
@@ -40,53 +40,76 @@ public class Main {
 //        Integer[] values = {2,1};
 
 
-//        ArffReader arffReader= new ArffReader("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
-//        Instances instances = arffReader.getInstances();
-//        EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(10,instances);
-//        Instances discretizedInstances = equalWidthDiscretizer.discretizeNumericAttributes();
+        ArffReader arffReader= new ArffReader("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
+        Instances instances = arffReader.getInstances();
+        EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(10,instances);
+        Instances discretizedInstances = equalWidthDiscretizer.discretizeNumericAttributes();
 //        ILAClassifier ilaClassifier =new ILAClassifier(discretizedInstances);
-
-        boolean[] classifiedInstances = {false, false, false, false};
-        ArrayList<Integer[]> combinations = generateCombinations(3, 1);
-        getMaxCombinationForCombinations(combinations, partitions, 0, classifiedInstances);
-
-        boolean[] classifiedInstances1 = {false, false, true, true};
-        getMaxCombinationForCombinations(combinations, partitions, 0, classifiedInstances1);
-
-
-        boolean[] classifiedInstances2 = {true, false, true, true};
-        getMaxCombinationForCombinations(combinations, partitions, 0, classifiedInstances2);
-
-
-        boolean[] classifiedInstances3 = {false, false, false};
-        getMaxCombinationForCombinations(combinations, partitions, 1, classifiedInstances3);
-
-
-        boolean[] classifiedInstances4 = {true, true, false};
-        getMaxCombinationForCombinations(combinations, partitions, 1, classifiedInstances4);
-
-        combinations = generateCombinations(3, 2);
-        boolean[] classifiedInstances5 = {true, true, false};
-        getMaxCombinationForCombinations(combinations, partitions, 1, classifiedInstances5);
+//        Integer[] maxCombination = new Integer[1];
+//
+//        boolean[] classifiedInstances = {false, false, false, false};
+//        ArrayList<Integer[]> combinations = generateCombinations(3, 1);
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 0, classifiedInstances);
+//
+//        boolean[] classifiedInstances1 = {false, false, true, true};
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 0, classifiedInstances1);
+//
+//
+//        boolean[] classifiedInstances2 = {true, false, true, true};
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 0, classifiedInstances2);
+//
+//
+//        boolean[] classifiedInstances3 = {false, false, false};
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 1, classifiedInstances3);
+//
+//
+//        boolean[] classifiedInstances4 = {true, true, false};
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 1, classifiedInstances4);
+//
+//        maxCombination = new Integer[1];
+//        combinations = generateCombinations(3, 2);
+//        boolean[] classifiedInstances5 = {true, true, false};
+//        getMaxCombinationForCombinations(combinations, maxCombination, partitions, 1, classifiedInstances5);
+//        System.out.println("---------------------------------");
+//        getRules(partitions,3);
     }
 
-    public static void getRules(ArrayList<ArrayList<Integer[]>> partitions, int noOfAttributes){
+    public static void getRules(ArrayList<ArrayList<Integer[]>> partitions, int noOfAttributes) {
         for (int partitionI = 0; partitionI < partitions.size(); partitionI++) {
-            for (int attributeSpan = 0; attributeSpan < noOfAttributes; attributeSpan++) {
+            System.out.println("------------PARTITION "+partitionI);
+            int attrSpan = 1;
+            ArrayList<Integer[]> combinations;
+            boolean[] classifiedInstances = new boolean[partitions.get(partitionI).size()];
 
-//                while ()
-
+            while (!allInstancesClassified(classifiedInstances)) {
+                Integer[] maxCombination = new Integer[attrSpan];
+                combinations = generateCombinations(noOfAttributes, attrSpan);
+                ArrayList<Integer> maxCombinationInstances = getMaxCombinationForCombinations(combinations,
+                        maxCombination, partitions, partitionI, classifiedInstances);
+                for (Integer maxInstance:maxCombinationInstances){
+                    classifiedInstances[maxInstance]=true;
+                }
+                if(maxCombinationInstances.isEmpty()){
+                    attrSpan++;
+                }
             }
-
         }
     }
 
-
+    private static boolean allInstancesClassified(boolean[] classifiedInstances) {
+        for (int instanceI = 0; instanceI < classifiedInstances.length; instanceI++) {
+            if(!classifiedInstances[instanceI])
+                return false;
+        }
+        return true;
+    }
 
 
     public static ArrayList<Integer> getMaxCombinationForCombinations(ArrayList<Integer[]> combinations,
+                                                                      Integer[] maxCombination,
                                                                       ArrayList<ArrayList<Integer[]>> partitions,
-                                                                      int mainPartitionI, boolean[] classifiedInstances) {
+                                                                      int mainPartitionI,
+                                                                      boolean[] classifiedInstances) {
 
         int globalMaxCombinationIndex = -1;
         int globalMaxCombinationInstancesCount = 0;
@@ -108,13 +131,15 @@ public class Main {
             combinationIndex++;
         }
         if (globalMaxCombinationIndex != -1) {
-        System.out.println("---->For current span max combination is: " + Arrays.toString(combinations.get
-                (globalMaxCombinationIndex)) + " for instances: " + Arrays.deepToString(globalMaxCombinationInstances
-                .toArray()));
-        return globalMaxCombinationInstances;
+            System.out.println("---->For current span max combination is: " + Arrays.toString(combinations.get
+                    (globalMaxCombinationIndex)) + " for instances: " + Arrays.deepToString(globalMaxCombinationInstances
+                    .toArray()));
+            maxCombination = combinations.get(globalMaxCombinationIndex).clone();
+            return globalMaxCombinationInstances;
+
         }
         System.out.println("NO GLOBAL MAX COM FOR THESE COMBINATIONS");
-        return new ArrayList<Integer>();
+        return new ArrayList<>();
 
     }
 
