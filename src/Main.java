@@ -1,6 +1,8 @@
 import com.sun.org.apache.xpath.internal.SourceTree;
 import pl.najczuk.machine_learning.classifiers.ILAClassifier;
+import pl.najczuk.machine_learning.discretizers.EqualFrequencyDiscretizer;
 import pl.najczuk.machine_learning.discretizers.EqualWidthDiscretizer;
+import pl.najczuk.machine_learning.discretizers.UnsupervisedDiscretizer;
 import pl.najczuk.machine_learning.instances.Instances;
 import pl.najczuk.machine_learning.readers.ArffReader;
 
@@ -41,10 +43,10 @@ public class Main {
 
 
         ArffReader arffReader= new ArffReader
-                ("D:\\workspace\\pwr\\pwr-classification\\datasets\\ila_decision.arff");
+                ("D:\\workspace\\pwr\\pwr-classification\\datasets\\iris.arff");
         Instances instances = arffReader.getInstances();
-        EqualWidthDiscretizer equalWidthDiscretizer = new EqualWidthDiscretizer(10,instances);
-        Instances discretizedInstances = equalWidthDiscretizer.discretizeNumericAttributes();
+        UnsupervisedDiscretizer discretizer = new EqualFrequencyDiscretizer(10,instances);
+        Instances discretizedInstances = discretizer.discretizeNumericAttributes();
         ILAClassifier ilaClassifier =new ILAClassifier(discretizedInstances);
 //        Integer[] maxCombination = new Integer[1];
 //

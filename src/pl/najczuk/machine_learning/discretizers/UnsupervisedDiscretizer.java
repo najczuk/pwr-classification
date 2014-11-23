@@ -5,10 +5,7 @@ import pl.najczuk.machine_learning.instances.AttributeType;
 import pl.najczuk.machine_learning.instances.Instance;
 import pl.najczuk.machine_learning.instances.Instances;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * User: Adrian
@@ -116,7 +113,14 @@ public abstract class UnsupervisedDiscretizer {
 
     private String getStringRepresentationOfNumericAttribute(ArrayList<ArrayList<String>> columnarNominalValues, int
             currInstIndex, int attrIndex) {
-        return columnarNominalValues.get(attrIndex).get(currInstIndex);
+//        System.out.println("columnarNominalValues = [" + columnarNominalValues + "], currInstIndex = [" + currInstIndex + "], attrIndex = [" + attrIndex + "]");
+        ArrayList<String> columnarAttributeValues= columnarNominalValues.get(attrIndex);
+//        System.out.println(Arrays.toString(columnarAttributeValues.toArray()));
+//        System.out.println(columnarAttributeValues.size());
+//        System.out.println(currInstIndex);
+//        System.out.println(attrIndex);
+        String attrValue = columnarAttributeValues.get(currInstIndex);
+        return attrValue;
     }
 
     private String getStringRepresentationOfNominalAttribute(ArrayList<Instance> originalInstances, Attribute currentAttribute, int currInstIndex, int origAttrIndex) {
@@ -135,6 +139,7 @@ public abstract class UnsupervisedDiscretizer {
                 upperRangeLimit = intervalRange.get(1);
                 if (attributeValue >= lowerRangeLimit && attributeValue < upperRangeLimit) {
                     nominalRepresentationStrings.add(getNominalRangeStringRepresentation(intervalRange));
+                    break;
 //                    System.out.println(getNominalRangeStringRepresentation(intervalRange));
                 }
 

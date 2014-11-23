@@ -20,7 +20,6 @@ public class EqualWidthDiscretizer extends UnsupervisedDiscretizer {
     @Override
     protected ArrayList<ArrayList<Double>> getIntervalRangesForNumericAttribute(ArrayList<Double> attributeValues) {
         ArrayList<ArrayList<Double>> intervalRanges = new ArrayList<>();
-        sortNumericValues(attributeValues);
         Collections.min(attributeValues);
         Double globalMaxValue, globalMinValue, interval;
         globalMaxValue =
