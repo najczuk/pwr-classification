@@ -26,7 +26,7 @@ public class EqualWidthDiscretizer extends UnsupervisedDiscretizer {
                 Collections.max(attributeValues);
         globalMinValue =
                 Collections.min(attributeValues);
-        System.out.println(globalMinValue + " < " +globalMaxValue);
+//        System.out.println(globalMinValue + " < " +globalMaxValue);
         interval = (globalMaxValue - globalMinValue) / getNumberOfBins();
 
         for (int currentBinIndex = 0; currentBinIndex < getNumberOfBins(); currentBinIndex++) {
@@ -36,6 +36,8 @@ public class EqualWidthDiscretizer extends UnsupervisedDiscretizer {
             Double upperRangeLimit = currentBinIndex == getNumberOfBins() - 1 ? Double.POSITIVE_INFINITY : globalMinValue + (
                     (currentBinIndex + 1)
                             * interval);
+
+//            System.out.println(new ArrayList<>(Arrays.asList(lowerRangeLimit, upperRangeLimit)));
             intervalRanges.add(new ArrayList<>(Arrays.asList(lowerRangeLimit, upperRangeLimit)));
         }
 

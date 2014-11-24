@@ -24,47 +24,41 @@ public class CrossValidator {
                 .getNominalValuesMap().size();
     }
 
-    public void crossValidate() {
-        double[] stats = new double[5];
-        double counter = 0;
-        double[][] confusionMatrix;
+    public String crossValidate() {
+        int numberOfRules = 0;
+        double[][] confusionMatrix = new double[numberOfClasses][numberOfClasses];
         Instances trainingInstances, testInstances;
         InstancesFolder instancesFolder = new InstancesFolder(instances, numberOfFolds);
         ILAClassifier classifier;
         Double testInstanceClass,classificationClass;
 
         for (int iteration = 0; iteration < numberOfFolds; iteration++) {
-            confusionMatrix = new double[numberOfClasses][numberOfClasses];
+//            System.out.println("Iteracja: " + iteration);
             testInstances = instancesFolder.getTestInstances(iteration);
             trainingInstances = instancesFolder.getTrainingInstances(iteration);
             ArrayList<Instance> testInstancesList = testInstances.getInstances();
             classifier = new ILAClassifier(trainingInstances);
+            numberOfRules+=classifier.getRules().size();
 
             for(Instance testInstance:testInstancesList){
-//                System.out.println(testInstance.getValues());
                 testInstanceClass = testInstance.getValues().get(testInstance.getValues().size() - 1);
                 classificationClass = classifier.classify(testInstance);
                 confusionMatrix[testInstanceClass.intValue()][classificationClass.intValue()]++;
             }
-            System.out.println("Iteracja: " + iteration);
-//            System.out.println(Arrays.deepToString(confusionMatrix));
-            double[] partial = averageConfusionStats(confusionMatrix);
-            stats[0]+=partial[0];
-            stats[1]+=partial[1];
-            stats[2]+=partial[1];
-            stats[3]+=partial[1];
-            stats[4]+=partial[1];
-            counter++;
         }
-        System.out.println("Overall STATS");
-        System.out.printf("Stats acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", stats[0]/counter,
-                stats[1]/counter, stats[2]/counter,
-                stats[3]/counter, stats[4]/counter);
+//        System.out.println("Overall STATS");
+//        System.out.println("Number of rules " + numberOfRules/numberOfFolds);
+//        System.out.println("Number of iterations "+ numberOfFolds);
+
+        String stats = Arrays.toString(averageConfusionStats(confusionMatrix)).replace("[","").replace("]","");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(numberOfRules/numberOfFolds+", ").append(numberOfFolds+", ").append(stats);
+        return stringBuilder.toString();
 //        getAverageValuesFromArrayCols(stats);
     }
 
     private double[] averageConfusionStats(double[][] confusionMatrix) {
-        double[] stats=new double[5];
+        double[][]valuesContainer = new double[confusionMatrix.length][];
         for (int actualClass = 0; actualClass < confusionMatrix.length; actualClass++) {
             double tp = 0, tn = 0, fp = 0, fn = 0;
             for (int i = 0; i < confusionMatrix.length; i++) {
@@ -79,6 +73,7 @@ public class CrossValidator {
                         tn += confusionMatrix[i][j];
                 }
             }
+
             double acc, tpRate, fpRate, precision, fScore;
             tpRate = tp / (tp + fn);
             fpRate = fp / (fp + tn);
@@ -92,26 +87,19 @@ public class CrossValidator {
             acc= Double.isNaN(acc) ? 0:acc;
             precision= Double.isNaN(precision) ? 0:precision;
             fScore= Double.isNaN(fScore) ? 0:fScore;
+            double[] tmpStats = {acc,tpRate,fpRate,precision,fScore};
+            valuesContainer[actualClass]=tmpStats;
 
-            stats[0] += tpRate;
-            stats[1] += fpRate;
-            stats[2] += acc;
-            stats[3] += precision;
-            stats[4] += fScore;
-
-            System.out.printf("Class[%d] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", actualClass, acc, tpRate,
-                    fpRate, precision, fScore);
+//            System.out.printf("Class[%d] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", actualClass, acc, tpRate,
+//                    fpRate, precision, fScore);
         }
-        System.out.println("handy avg");
-        System.out.printf("Class[] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", stats[0]/confusionMatrix.length,
-                stats[1]/confusionMatrix.length,
-                stats[2]/confusionMatrix.length, stats[3]/confusionMatrix.length, stats[4]/confusionMatrix.length);
-        return stats;
+
+        return getAverageValuesFromArrayCols(valuesContainer);
 
     }
 
     private double[] getAverageValuesFromArrayCols(double[][]array){
-        System.out.println("Before AVG:" + Arrays.deepToString(array));
+//        System.out.println("Before AVG:" + Arrays.deepToString(array));
         double[] averages = new double[array[0].length];
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
@@ -121,7 +109,7 @@ public class CrossValidator {
         for (int i = 0; i < averages.length; i++) {
             averages[i]=averages[i]/array.length;
         }
-        System.out.println("Average Confusion Table: "+Arrays.toString(averages));
+//        System.out.println("Average Confusion Table: "+Arrays.toString(averages));
         return averages;
     }
 

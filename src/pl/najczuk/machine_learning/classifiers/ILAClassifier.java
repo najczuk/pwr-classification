@@ -24,13 +24,14 @@ public class ILAClassifier {
         this.trainingInstances = trainingInstances;
         this.attributes = trainingInstances.getAttributes();
         this.rules = trainClassifier();
+//        System.out.println("Number of rules: "+rules.size());
     }
 
     public Double classify(Instance instance) {
-        System.out.println("Instancja:" + instance);
+//        System.out.println("Instancja:" + instance);
         for (Rule rule : rules) {
             if (matchesRule(instance, rule)) {
-                System.out.println("Decyzja:" + rule.getClassAttributeValue());
+//                System.out.println("Decyzja:" + rule.getClassAttributeValue());
                 return rule.getClassAttributeValue();
             }
 
@@ -39,10 +40,13 @@ public class ILAClassifier {
         int numberOfClasses = attributes.get(attributes.size() - 1).getNominalValuesMap().size();
         Random rand = new Random();
         Integer randomNum = rand.nextInt(numberOfClasses);
-        System.out.println("Decyzja:" + randomNum.doubleValue());
+//        System.out.println("Decyzja:" + randomNum.doubleValue());
         return randomNum.doubleValue();
     }
 
+    public ArrayList<Rule> getRules() {
+        return rules;
+    }
 
     private boolean matchesRule(Instance instance, Rule rule) {
         Integer[] ruleAttributesI = rule.getAttributesIndexes();
@@ -101,6 +105,7 @@ public class ILAClassifier {
              currentTrainingInstanceIndex++) {
             currentInstance = trainingInstances.getInstances().get(currentTrainingInstanceIndex);
             currentInstanceValues = currentInstance.getValues();
+//            System.out.println(currentInstanceValues);
             currentClassValue = currentInstanceValues.get(classAttributeIndex).intValue();
             if (classToSubArrayIndexMap[currentClassValue] == null) {
                 ArrayList<Integer[]> subArrayInstances = new ArrayList<>();
@@ -119,6 +124,7 @@ public class ILAClassifier {
 
     private Integer[] doubleValuesToIntegerArray(int attributesCount, ArrayList<Double> currentInstanceValues) {
         Integer[] integerArray = new Integer[attributesCount];
+//        System.out.println(currentInstanceValues);
         for (int i = 0; i < attributesCount; i++) {
             integerArray[i] = currentInstanceValues.get(i).intValue();
         }
@@ -161,11 +167,11 @@ public class ILAClassifier {
 
         }
 
-        System.out.println();
-        System.out.println();
-        for (Rule rule : rules) {
-            System.out.println(rule);
-        }
+//        System.out.println();
+//        System.out.println();
+//        for (Rule rule : rules) {
+//            System.out.println(rule);
+//        }
         return rules;
     }
 

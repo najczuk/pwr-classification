@@ -13,56 +13,64 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
+        ArffReader arffReader;
+        Instances instances;
+        UnsupervisedDiscretizer discretizer;
+        Instances discretizedInstances;
+        ILAClassifier ilaClassifier;
+        CrossValidator crossValidator;
+        String cvStats;
 
+        System.out.println("dataSet, discretizer, kparameter, numberOfRules, folds, accuracy, tpRate, fpRate, " +
+                "precision, fScore");
 
-        ArffReader arffReader = new ArffReader
-                ("D:\\workspace\\pwr\\pwr-classification\\datasets\\iris.arff");
-        Instances instances = arffReader.getInstances();
-        UnsupervisedDiscretizer discretizer = new EqualWidthDiscretizer(10, instances);
-        Instances discretizedInstances = discretizer.discretizeNumericAttributes();
-        ILAClassifier ilaClassifier = new ILAClassifier(discretizedInstances);
-        CrossValidator crossValidator = new CrossValidator(discretizedInstances,10);
-        crossValidator.crossValidate();
+        String[] discretizers = {"EWD", "EFD"};
+        String[] dataSets = {"GLASS", "IRIS", "WEATHER"};
+//        String[] dataSets = {"WEATHER"};
+        int[] kPars = {1,4,6,9,13,16,20};
+        int[] foldCounts = {2, 5, 10, 15};
 
-//        double[][] confusionMatrix = {{5, 3, 0}, {2, 3, 1}, {0, 2, 11}};
-//        tableOfConfusion(confusionMatrix);
+        for (String dataSet : dataSets) {
+            String filePath;
+            if (dataSet.equals("GLASS")) {
+                filePath = "D:\\workspace\\pwr\\pwr-classification\\datasets\\glass.arff";
+            } else if (dataSet.equals("IRIS")) {
+                filePath = "D:\\workspace\\pwr\\pwr-classification\\datasets\\iris.arff";
+            } else
+                filePath = "D:\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff";
+            arffReader = new ArffReader(filePath);
+            instances = arffReader.getInstances();
+            for (int kPar : kPars) {
+            for (String discretizerName : discretizers) {
+                if (discretizerName.equals("EWD"))
+                    discretizer = new EqualWidthDiscretizer(kPar, instances);
+                else
+                    discretizer = new EqualFrequencyDiscretizer(kPar,instances);
+                discretizedInstances = discretizer.discretizeNumericAttributes();
+//                System.out.println(discretizedInstances);
 
+                    for (int folds : foldCounts) {
+                        crossValidator = new CrossValidator(discretizedInstances, folds);
+                        cvStats = crossValidator.crossValidate();
+                        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
 
-    }
-
-    public static void tableOfConfusion(double[][] confusionMatrix) {
-        for (int actualClass = 0; actualClass < confusionMatrix.length; actualClass++) {
-            double tp = 0, tn = 0, fp = 0, fn = 0, p = 0, n = 0;
-            for (int i = 0; i < confusionMatrix.length; i++) {
-                for (int j = 0; j < confusionMatrix.length; j++) {
-                    if (i == actualClass && j == actualClass)
-                        tp += confusionMatrix[i][j];
-                    if (i == actualClass && j != actualClass)
-                        fn += confusionMatrix[i][j];
-                    if (i != actualClass && j == actualClass)
-                        fp += confusionMatrix[i][j];
-                    if (i != actualClass && j != actualClass)
-                        tn += confusionMatrix[i][j];
-                    if (i == actualClass)
-                        p += confusionMatrix[i][j];
-                    if (i != actualClass)
-                        n += confusionMatrix[i][j];
+                    }
                 }
-            }
-            double acc, tpRate, fpRate, precision, fScore;
-            tpRate = tp / (tp + fn);
-            fpRate = fp / (fp + tn);
-            acc = (tp + tn) / ((tp + fn) + (fp + tn));
-            precision = tp / (tp + fp);
-            precision= Double.isNaN(precision) ? 0:precision;
-            fScore = (2 * tp) / (2 * tp + fp + fn);
-            fScore= Double.isNaN(fScore) ? 0:fScore;
 
-            System.out.printf("Class[%d] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", actualClass, acc, tpRate,
-                    fpRate, precision, fScore);
+            }
 
         }
 
-    }
+//        arffReader = new ArffReader
+//                ("D:\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff");
+//        instances = arffReader.getInstances();
+//        discretizer = new EqualWidthDiscretizer(kPar, instances);
+//        discretizedInstances = discretizer.discretizeNumericAttributes();
+//        ilaClassifier = new ILAClassifier(discretizedInstances);
+//        crossValidator = new CrossValidator(discretizedInstances, folds);
+//        cvStats = crossValidator.crossValidate();
+//        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
 
+
+    }
 }

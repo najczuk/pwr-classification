@@ -23,7 +23,7 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
         Set set = new HashSet<>((ArrayList<Double>)attributeValues.clone());
         ArrayList<Double> distinctValues = new ArrayList<>(set);
         Collections.sort(distinctValues);
-        System.out.println(Arrays.toString(distinctValues.toArray()));
+//        System.out.println(Arrays.toString(distinctValues.toArray()));
 
         boolean partitioningEnded = false;
         int elementsPerPartition = getNumberOfBins();
@@ -55,7 +55,7 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
             interval.add(min); interval.add(max);
             intervalRanges.add(interval);
             partitioningEnded = !valuesIterator.hasNext();
-            System.out.println("Bin: " + Arrays.toString(interval.toArray()));
+//            System.out.println("Bin: " + Arrays.toString(interval.toArray()));
 
         }
 

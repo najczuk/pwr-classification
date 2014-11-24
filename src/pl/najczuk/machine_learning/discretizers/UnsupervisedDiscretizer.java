@@ -46,23 +46,25 @@ public abstract class UnsupervisedDiscretizer {
 
 
         for (Attribute currentAttribute : originalAttributes) {
-            System.out.println(currentAttribute.getName());
+//            System.out.println(currentAttribute.getName());
+//            System.out.println(currentAttribute);
             if (currentAttribute.getType().equals(AttributeType.NUMERIC)) {
-
+//                System.out.println("is numeric");
+//                System.out.println(currentAttribute);
                 ArrayList<Double> attributeValues = inputInstances.getNumericAttributeValues(currentAttribute);
-                ArrayList<Double> copyOfAttrValues = (ArrayList<Double>) attributeValues.clone();
+//                System.out.println(attributeValues);
+                ArrayList<Double> copyOfAttrValues = (ArrayList<Double>)attributeValues.clone();
                 ArrayList<ArrayList<Double>> intervalRanges = getIntervalRangesForNumericAttribute(copyOfAttrValues);
+//                System.out.println(intervalRanges);
                 nominalAttributes.add(createNominalAttributeFromIntervalRanges(currentAttribute.getName(), intervalRanges));
                 columnarNominalValues.add(getNominalRepresentationOfNumericValues(attributeValues, intervalRanges));
             } else
                 nominalAttributes.add(currentAttribute);
-            System.out.println(nominalAttributes.get(nominalAttributes.size()-1).getNominalValuesMap());
 
         }
 
         Instances instances = createNominalInstancesFromColumnarRepresentation(nominalAttributes, originalAttributes,
                 inputInstances.getInstances(), columnarNominalValues);
-        System.out.println(instances);
         return instances; //TODO daj tu cos sensownego
     }
 
@@ -78,10 +80,15 @@ public abstract class UnsupervisedDiscretizer {
         for (int origAttrIndex = 0, nominalAttributeIndex = 0; origAttrIndex < originalAttributes.size() &&
                 nominalAttributeIndex < nominalAttributes.size(); origAttrIndex++) {
             currentAttribute = originalAttributes.get(origAttrIndex);
-            if (currentAttribute.getType().equals(AttributeType.NUMERIC))
-                discretizedAttributes.add(nominalAttributes.get(nominalAttributeIndex++));
+//            System.out.println("Attr index:"+origAttrIndex);
+            if (currentAttribute.getType().equals(AttributeType.NUMERIC)) {
+                discretizedAttributes.add(nominalAttributes.get(nominalAttributeIndex));
+                nominalAttributeIndex++;
+            }
             else
                 discretizedAttributes.add(currentAttribute);
+
+//            System.out.println(discretizedAttributes.get(discretizedAttributes.size()-1));
         }
 
         for (int currInstIndex = 0; currInstIndex < originalInstances.size(); currInstIndex++) {
@@ -138,6 +145,7 @@ public abstract class UnsupervisedDiscretizer {
                 lowerRangeLimit = intervalRange.get(0);
                 upperRangeLimit = intervalRange.get(1);
                 if (attributeValue >= lowerRangeLimit && attributeValue < upperRangeLimit) {
+//                    System.out.println(getNominalRangeStringRepresentation(intervalRange));
                     nominalRepresentationStrings.add(getNominalRangeStringRepresentation(intervalRange));
                     break;
 //                    System.out.println(getNominalRangeStringRepresentation(intervalRange));
@@ -161,6 +169,7 @@ public abstract class UnsupervisedDiscretizer {
         }
 
         Attribute attribute = new Attribute(attributeName, nominalValues);
+//        System.out.println(attribute);
         return attribute;
     }
 

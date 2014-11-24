@@ -46,7 +46,7 @@ public class InstancesFolder {
         int upperLimit = foldSize*iteration+foldSize;
         Iterator<Instance> instancesIter = allInstances.iterator();
         int iteratorCounter = 0;
-        System.out.println(lowerLimit + "< " +upperLimit + " foldsize:"+foldSize + "instances count:" + instancesCount);
+//        System.out.println(lowerLimit + "< " +upperLimit + " foldsize:"+foldSize + "instances count:" + instancesCount);
         while (instancesIter.hasNext()){
             Instance instance = instancesIter.next();
             if(iteratorCounter>=lowerLimit && iteratorCounter<upperLimit)

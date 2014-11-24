@@ -46,7 +46,7 @@ public class ArffReader {
     public ArffReader(String filePath) {
         setFilePath(filePath);
         setInstances(extractInstancesFromFile());
-        System.out.println(getInstances());
+//        System.out.println(getInstances());
     }
 
 
@@ -54,6 +54,7 @@ public class ArffReader {
         ArrayList<Attribute> attributes = extractAttributesFromFile();
         ArrayList<ArrayList<String>> instancesData = extractInstancesDataFromFile(attributes);
         Instances instances = new Instances(attributes, instancesData);
+
 
 
         return instances;
