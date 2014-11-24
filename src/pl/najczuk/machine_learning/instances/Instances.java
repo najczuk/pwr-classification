@@ -11,6 +11,11 @@ public class Instances {
     private ArrayList<Instance> instances;
     private ArrayList<Attribute> attributes;
 
+    public Instances() {
+        this.instances = instances;
+        this.attributes = attributes;
+    }
+
     public Instances(ArrayList<Attribute> attributes, ArrayList<ArrayList<String>> inputArray) {
         setAttributes(attributes);
         setInstances(getInstancesFromObjectTwoDimArray(inputArray));

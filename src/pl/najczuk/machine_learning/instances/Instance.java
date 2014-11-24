@@ -65,9 +65,16 @@ public class Instance {
 
     @Override
     public String toString() {
-        return "Instance{" +
-                "attributes=" + attributes +
-                ", values=" + values +
-                '}';
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int index=0;
+        for(Attribute attribute:attributes){
+            stringBuilder.append(attribute.getName());
+            stringBuilder.append("["+attribute.getNominalValue(getValues().get(index))+"] ");
+
+                    index++;
+        }
+        return stringBuilder.toString();
+
     }
 }

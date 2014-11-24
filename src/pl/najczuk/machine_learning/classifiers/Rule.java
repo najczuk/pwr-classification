@@ -57,4 +57,20 @@ public class Rule {
 
         return stringBuilder.toString();
     }
+
+    public ArrayList<Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public Integer[] getAttributesIndexes() {
+        return attributesIndexes;
+    }
+
+    public Double[] getValues() {
+        return values;
+    }
+
+    public Double getClassAttributeValue() {
+        return classAttributeValue;
+    }
 }
