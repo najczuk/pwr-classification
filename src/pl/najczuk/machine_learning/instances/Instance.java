@@ -70,7 +70,8 @@ public class Instance {
         int index=0;
         for(Attribute attribute:attributes){
             stringBuilder.append(attribute.getName());
-            stringBuilder.append("["+attribute.getNominalValue(getValues().get(index))+"] ");
+            stringBuilder.append("("+getValues().get(index)+")["+attribute.getNominalValue(getValues().get(index))+"]" +
+                    " ");
 
                     index++;
         }

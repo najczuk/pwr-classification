@@ -21,7 +21,7 @@ public class Main {
         UnsupervisedDiscretizer discretizer = new EqualWidthDiscretizer(10, instances);
         Instances discretizedInstances = discretizer.discretizeNumericAttributes();
         ILAClassifier ilaClassifier = new ILAClassifier(discretizedInstances);
-        CrossValidator crossValidator = new CrossValidator(discretizedInstances,20);
+        CrossValidator crossValidator = new CrossValidator(discretizedInstances,10);
         crossValidator.crossValidate();
 
 //        double[][] confusionMatrix = {{5, 3, 0}, {2, 3, 1}, {0, 2, 11}};

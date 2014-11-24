@@ -48,7 +48,7 @@ public class Rule {
         for (int attributeI = 0; attributeI < attributesIndexes.length; attributeI++) {
 //            System.out.println(attributes.get(attributesIndexes[attributeI]).getName());
             stringBuilder.append(attributes.get(attributesIndexes[attributeI]).getName());
-            stringBuilder.append(" = ");
+            stringBuilder.append(" = ("+values[attributeI]+")");
             stringBuilder.append(attributes.get(attributesIndexes[attributeI]).getNominalValue(values[attributeI]));
             stringBuilder.append(" ");
         }
