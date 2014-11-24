@@ -75,7 +75,14 @@ public class CrossValidator {
             fpRate = fp / (fp + tn);
             acc = (tp + tn) / ((tp + fn) + (fp + tn));
             precision = tp / (tp + fp);
-            fScore = 2 * tp / (2 * tp + fp + fn);
+            fScore = (2 * tp) / (2 * tp + fp + fn);
+
+
+            tpRate= Double.isNaN(tpRate) ? 0:tpRate;
+            fpRate= Double.isNaN(fpRate) ? 0:fpRate;
+            acc= Double.isNaN(acc) ? 0:acc;
+            precision= Double.isNaN(precision) ? 0:precision;
+            fScore= Double.isNaN(fScore) ? 0:fScore;
 
             System.out.printf("Class[%d] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", actualClass, acc, tpRate,
                     fpRate, precision, fScore);

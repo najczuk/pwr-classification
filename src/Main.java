@@ -54,7 +54,9 @@ public class Main {
             fpRate = fp / (fp + tn);
             acc = (tp + tn) / ((tp + fn) + (fp + tn));
             precision = tp / (tp + fp);
-            fScore = 2 * tp / (2 * tp + fp + fn);
+            precision= Double.isNaN(precision) ? 0:precision;
+            fScore = (2 * tp) / (2 * tp + fp + fn);
+            fScore= Double.isNaN(fScore) ? 0:fScore;
 
             System.out.printf("Class[%d] acc:%f tpRate:%f fpRate:%f precision:%f fScore:%f\n", actualClass, acc, tpRate,
                     fpRate, precision, fScore);
