@@ -1,12 +1,10 @@
 package pl.najczuk.machine_learning.classifiers;
 
-import com.sun.deploy.security.ruleset.RuleSetParser;
 import pl.najczuk.machine_learning.instances.Attribute;
 import pl.najczuk.machine_learning.instances.Instance;
 import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -14,38 +12,25 @@ import java.util.Random;
  * Date: 11/16/2014
  * Time: 16:17
  */
-public class ILAClassifier {
-    private Instances trainingInstances;
-    private ArrayList<Attribute> attributes;
+public class ILAClassifier extends Classifier{
     private Integer[] optimalCombination;
-    private ArrayList<Rule> rules;
 
     public ILAClassifier(Instances trainingInstances) {
-        this.trainingInstances = trainingInstances;
-        this.attributes = trainingInstances.getAttributes();
-        this.rules = trainClassifier();
-//        System.out.println("Number of rules: "+rules.size());
+        super(trainingInstances);
     }
 
     public Double classify(Instance instance) {
-//        System.out.println("Instancja:" + instance);
-        for (Rule rule : rules) {
+        for (Rule rule : getRules()) {
             if (matchesRule(instance, rule)) {
-//                System.out.println("Decyzja:" + rule.getClassAttributeValue());
                 return rule.getClassAttributeValue();
             }
 
         }
         //if no classification return random class
-        int numberOfClasses = attributes.get(attributes.size() - 1).getNominalValuesMap().size();
+        int numberOfClasses = getAttributes().get(getAttributes().size() - 1).getNominalValuesMap().size();
         Random rand = new Random();
         Integer randomNum = rand.nextInt(numberOfClasses);
-//        System.out.println("Decyzja:" + randomNum.doubleValue());
         return randomNum.doubleValue();
-    }
-
-    public ArrayList<Rule> getRules() {
-        return rules;
     }
 
     private boolean matchesRule(Instance instance, Rule rule) {
@@ -56,8 +41,6 @@ public class ILAClassifier {
             int attributeToCheck = ruleAttributesI[attributeI];
             Double ruleAttributeValue = attributeValues[attributeI];
             Double instanceAttributeValue = instance.getValues().get(attributeToCheck);
-//            System.out.println("Attribute to check:" + attributeToCheck + " Rule value: "+ruleAttributeValue +
-//                    " Instance value: " +instanceAttributeValue);
             if (!ruleAttributeValue.equals(instanceAttributeValue)) {
                 matches = false;
                 break;
@@ -68,63 +51,20 @@ public class ILAClassifier {
     }
 
 
-    private ArrayList<Rule> trainClassifier() {
+    public ArrayList<Rule> trainClassifier() {
         Instances trainingInstances = getTrainingInstances();
         ArrayList<Attribute> attributes = trainingInstances.getAttributes();
-        ArrayList<ArrayList<Integer[]>> classPartitions = getILASubArrays(trainingInstances);
-        printClassSubArrays(classPartitions);
+        ArrayList<ArrayList<Integer[]>> classPartitions = getIntegerPartitions(trainingInstances);
+        printPartitions(classPartitions);
         ArrayList<Rule> rules = getRules(classPartitions, attributes.size() - 1);
 
         return rules;
     }
 
-    private void printClassSubArrays(ArrayList<ArrayList<Integer[]>> classSubArrays) {
-        for (int i = 0; i < classSubArrays.size(); i++) {
-            for (int j = 0; j < classSubArrays.get(i).size(); j++) {
-                //       System.out.println(Arrays.deepToString(classSubArrays.get(i).get(j)));
-            }
-            //  System.out.println();
-        }
-    }
 
-    private ArrayList<ArrayList<Integer[]>> getILASubArrays(Instances trainingInstances) {
-
-        int trainingInstancesSize = trainingInstances.getSize();
-        int attributesCount = trainingInstances.getAttributes().size();
-        int classAttributeIndex = attributesCount - 1;
-        Integer[] classToSubArrayIndexMap = new Integer[attributesCount];
-        ArrayList<ArrayList<Integer[]>> classSubArrays = new ArrayList<>();
-
-        int currentSubArrayIndex;
-        Integer currentClassValue;
-        Instance currentInstance;
-        ArrayList<Double> currentInstanceValues;
-
-
-        for (int currentTrainingInstanceIndex = 0; currentTrainingInstanceIndex < trainingInstancesSize;
-             currentTrainingInstanceIndex++) {
-            currentInstance = trainingInstances.getInstances().get(currentTrainingInstanceIndex);
-            currentInstanceValues = currentInstance.getValues();
-//            System.out.println(currentInstanceValues);
-            currentClassValue = currentInstanceValues.get(classAttributeIndex).intValue();
-            if (classToSubArrayIndexMap[currentClassValue] == null) {
-                ArrayList<Integer[]> subArrayInstances = new ArrayList<>();
-                subArrayInstances.add(doubleValuesToIntegerArray(attributesCount, currentInstanceValues));
-                classSubArrays.add(subArrayInstances);
-
-                currentSubArrayIndex = getIndexOfNewSubArray(classSubArrays);
-                classToSubArrayIndexMap[currentClassValue] = currentSubArrayIndex;
-            } else {
-                currentSubArrayIndex = classToSubArrayIndexMap[currentClassValue];
-                classSubArrays.get(currentSubArrayIndex).add(doubleValuesToIntegerArray(attributesCount, currentInstanceValues));
-            }
-        }
-        return classSubArrays;
-    }
 
     private Integer[] doubleValuesToIntegerArray(int attributesCount, ArrayList<Double> currentInstanceValues) {
         Integer[] integerArray = new Integer[attributesCount];
-//        System.out.println(currentInstanceValues);
         for (int i = 0; i < attributesCount; i++) {
             integerArray[i] = currentInstanceValues.get(i).intValue();
         }
@@ -135,14 +75,10 @@ public class ILAClassifier {
         return classSubArrays.size() - 1;
     }
 
-    public Instances getTrainingInstances() {
-        return trainingInstances;
-    }
 
     private ArrayList<Rule> getRules(ArrayList<ArrayList<Integer[]>> partitions, int noOfAttributes) {
         ArrayList<Rule> rules = new ArrayList<>();
         for (int partitionI = 0; partitionI < partitions.size(); partitionI++) {
-//            System.out.println("------------PARTITION " + partitionI);
             int attrSpan = 1;
             ArrayList<Integer[]> combinations;
             boolean[] classifiedInstances = new boolean[partitions.get(partitionI).size()];
@@ -157,7 +93,6 @@ public class ILAClassifier {
 
                 }
                 if (!maxCombinationInstances.isEmpty()) {
-//                    System.out.println(Arrays.toString(optimalCombination));
                     rules.add(generateRuleFromMaxCombination(partitions, partitionI, optimalCombination, maxCombinationInstances));
                 }
                 if (maxCombinationInstances.isEmpty()) {
@@ -167,11 +102,6 @@ public class ILAClassifier {
 
         }
 
-//        System.out.println();
-//        System.out.println();
-//        for (Rule rule : rules) {
-//            System.out.println(rule);
-//        }
         return rules;
     }
 
@@ -184,7 +114,7 @@ public class ILAClassifier {
         for (int ruleValueI = 0; ruleValueI < maxCombination.length; ruleValueI++) {
             ruleValues[ruleValueI] = representativeInstance[maxCombination[ruleValueI]];
         }
-        Rule rule = new Rule(attributes, maxCombination, ruleValues, instanceClassValue);
+        Rule rule = new Rule(getAttributes(), maxCombination, ruleValues, instanceClassValue);
         return rule;
     }
 
@@ -223,16 +153,11 @@ public class ILAClassifier {
             combinationIndex++;
         }
         if (globalMaxCombinationIndex != -1) {
-            //System.out.println("---->For current span max combination is: " + Arrays.toString(combinations.get
-            //  (globalMaxCombinationIndex)) + " for instances: " + Arrays.deepToString
-            //   (globalMaxCombinationInstances
-            //   .toArray()));
             optimalCombination = combinations.get
                     (globalMaxCombinationIndex);
             return globalMaxCombinationInstances;
 
         }
-        // System.out.println("NO GLOBAL MAX COM FOR THESE COMBINATIONS");
         return new ArrayList<>();
 
     }
@@ -249,8 +174,6 @@ public class ILAClassifier {
             }
         }
         if (maxValueGroupI != -1) {
-            //  System.out.println("Max combination: " + Arrays.toString(combination) + " Instances: " + Arrays.toString
-            //          (combinationValuesGroups.get(maxValueGroupI).toArray()));
             return combinationValuesGroups.get(maxValueGroupI);
         }
         return new ArrayList<>();
@@ -278,10 +201,6 @@ public class ILAClassifier {
             boolean isDuplicatedGroup = isOnDuplicatedGroupsList(duplicatedGroups, valueGroupI);
             if (!isDuplicatedGroup) {
                 deduplicatedCombinationValuesGroups.add(combinationValuesGroups.get(valueGroupI));
-                //   System.out.println("Deduplicated combination: " + Arrays.toString(combination) + " Values: " + Arrays
-                //           .toString(mainPartition.get(combinationValuesGroups.get(valueGroupI).get(0))) + "
-                // Instances: " +
-                //   Arrays.toString(combinationValuesGroups.get(valueGroupI).toArray()));
             }
         }
         return deduplicatedCombinationValuesGroups;
@@ -345,9 +264,6 @@ public class ILAClassifier {
                     instance, partition, classifiedInstances, instanceAlreadyAdded);
             instancesGroupsWithEqualCombinationValues.add(instancesWithEqualValuesForCombination);
 
-            //    System.out.println("Combination: " + Arrays.toString(combination) + " Values: " + Arrays.toString
-            //     (instance) + " Instances: " + Arrays.deepToString(instancesWithEqualValuesForCombination.toArray
-            //     ()));
         }
 
         return instancesGroupsWithEqualCombinationValues;
@@ -357,7 +273,7 @@ public class ILAClassifier {
                                                                      ArrayList<Integer[]> partition,
                                                                      boolean[] classifiedInstances, boolean[]
             instanceAlreadyAdded) {
-        ArrayList<Integer> instancesWithValues = new ArrayList<>();
+        ArrayList<Integer> instancesWithValues = new ArrayList<Integer>();
         int instanceIndex = 0;
         for (Integer[] instanceValues : partition) {
             if (classifiedInstances[instanceIndex] || instanceAlreadyAdded[instanceIndex]) {
@@ -381,8 +297,6 @@ public class ILAClassifier {
     }
 
     private ArrayList<Integer[]> generateCombinations(int numberOfAttributes, int combinationSize) {
-        //  System.out.println("numberOfAttributes = [" + numberOfAttributes + "], combinationSize = [" +
-        //          combinationSize + "]");
         ArrayList<Integer[]> combinations = new ArrayList<>();
 
         for (int globalCombination = 1; globalCombination < Math.pow(2, numberOfAttributes); ++globalCombination) {
@@ -397,9 +311,7 @@ public class ILAClassifier {
             }
 
         }
-        //  System.out.println("Combinations");
         for (Integer[] combination : combinations) {
-            //      System.out.println(Arrays.toString(combination));
         }
         return combinations;
     }
