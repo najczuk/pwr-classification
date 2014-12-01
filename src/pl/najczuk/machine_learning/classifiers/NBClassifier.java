@@ -52,7 +52,7 @@ public class NBClassifier extends Classifier {
 
         double[][][] partitionsAttributesValuesCounts = initializePartitionsAttributesValuesCounts(attributes,
                 numberOfPartitions, numberOfAttributes);
-        printPartitionsAttributesValuesCount(partitionsAttributesValuesCounts);
+//        printPartitionsAttributesValuesCount(partitionsAttributesValuesCounts);
         calculatePartitionsAttributesValues(instancesList, attributes, numberOfAttributes,
                 partitionsAttributesValuesCounts);
         printPartitionsAttributesValuesCount(partitionsAttributesValuesCounts);
@@ -68,15 +68,23 @@ public class NBClassifier extends Classifier {
         int instancePartition;
         int valueI;
 
+        System.out.println("dsfasdfas" + Arrays.toString(partitionsAttributesValuesCounts[0][3]));
+
         for (int instanceI = 0; instanceI < instancesList.size(); instanceI++) {
             instance = instancesList.get(instanceI);
             instancePartition = instance.getValues().get(instance.getValues().size() - 1).intValue();
+
             for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
-                valueI = instance.getValues().get(attributeI).intValue();
-                if (attributes.get(attributeI).getType().equals(AttributeType.NOMINAL))
+                if (attributes.get(attributeI).getType().equals(AttributeType.NOMINAL)) {
+                    valueI = instance.getValues().get(attributeI).intValue();
+                    if(instancePartition==1&& attributeI==3)
+                    System.out.printf("AttributeI:%d ValueI:%d Partition:%d PartitionSize:%d\n",attributeI,valueI,
+                            instancePartition,partitions.get(instancePartition).size());
                     partitionsAttributesValuesCounts[instancePartition][attributeI][valueI]++;
+                }
             }
         }
+        System.out.println("dsfasdfas" + Arrays.toString(partitionsAttributesValuesCounts[0][3]));
         Variance variance = new Variance();
         Mean mean = new Mean();
         ArrayList<Double> attributeValues;
@@ -92,37 +100,41 @@ public class NBClassifier extends Classifier {
                             attributeValues.add(instance.getValues().get(attributeI));
                         }
                     }
-
-
                     Double[] valuesArr = attributeValues.toArray(new Double[attributeValues.size()]);
-//                    System.out.println(Arrays.toString(valuesArr));
                     double varianceVal = variance.evaluate(ArrayUtils.toPrimitive(valuesArr));
                     double meanVal = mean.evaluate(ArrayUtils.toPrimitive(valuesArr));
-                    partitionsAttributesValuesCounts[partitionI][attributeI][0]=varianceVal;
-                    partitionsAttributesValuesCounts[partitionI][attributeI][1]=meanVal;
+                    partitionsAttributesValuesCounts[partitionI][attributeI][0] = varianceVal;
+                    partitionsAttributesValuesCounts[partitionI][attributeI][1] = meanVal;
+                }
+            }
+        }
+
+        for (int partitionI = 0; partitionI < partitions.size(); partitionI++) {
+            for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
+
+                System.out.printf("PartitionI:%d partitionSize:%d attrI:%d\n", partitionI, partitions.get
+                        (partitionI).size() + 1, attributeI);
+                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
+                for (int attrValI = 0; attrValI < partitionsAttributesValuesCounts[partitionI][attributeI].length;
+                     attrValI++) {
+                    if (attributes.get(attributeI).getType().equals(AttributeType.NOMINAL))
+                        partitionsAttributesValuesCounts[partitionI][attributeI][attrValI] /= partitions.get
+                                (partitionI).size() + 1;
                 }
 
-
+                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
             }
         }
 
     }
 
 
-    private boolean isIntPresent(ArrayList<Integer> list, int integer) {
-        for (Integer i : list) {
-            if (i.intValue() == integer)
-                return true;
-        }
-        return false;
-    }
-
     private double[][][] initializePartitionsAttributesValuesCounts(ArrayList<Attribute> attributes, int numberOfPartitions, int numberOfAttributes) {
         double[][][] partitionsAttributesValuesCounts;
         int[] numberOfAttributeValuesMetrics = new int[numberOfAttributes];
         for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
             if (attributes.get(attributeI).getType().equals(AttributeType.NUMERIC)) {
-                numberOfAttributeValuesMetrics[attributeI] = 2; // one slot for mean and one for variance
+                numberOfAttributeValuesMetrics[attributeI] = 2; // slots for variance and mean
             } else
                 numberOfAttributeValuesMetrics[attributeI] = attributes.get(attributeI).getNominalValuesMap().size();
         }
@@ -131,11 +143,13 @@ public class NBClassifier extends Classifier {
             for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
                 partitionsAttributesValuesCounts[partitionI][attributeI] = new
                         double[numberOfAttributeValuesMetrics[attributeI]];
-                for (int attributeJ = 0; attributeJ < numberOfAttributeValuesMetrics[attributeI]; attributeJ++) {
-                    if (!attributes.get(attributeJ).getType().equals(AttributeType.NUMERIC))
-                        partitionsAttributesValuesCounts[partitionI][attributeI][attributeJ]++; // we put artificial 1
+                for (int valueI = 0; valueI < numberOfAttributeValuesMetrics[attributeI]; valueI++) {
+//                    System.out.printf("Partition:%d AttributeI:%d ValI:%d \n", partitionI, attributeI, valueI);
+                    if (attributes.get(attributeI).getType().equals(AttributeType.NOMINAL))
+                        partitionsAttributesValuesCounts[partitionI][attributeI][valueI]++; // we put artificial 1
                     // count to avoid 0 probability later on
                 }
+//                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
             }
         }
 

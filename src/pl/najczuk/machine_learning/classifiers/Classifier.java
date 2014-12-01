@@ -22,6 +22,7 @@ public abstract class Classifier {
     }
 
     public abstract ArrayList<Rule> trainClassifier();
+
     public abstract Double classify(Instance instance);
 
     public Instances getTrainingInstances() {
@@ -64,7 +65,7 @@ public abstract class Classifier {
                 subArrayInstances.add(doubleValuesToIntegerArray(attributesCount, currentInstanceValues));
                 classSubArrays.add(subArrayInstances);
 
-                currentSubArrayIndex = classSubArrays.size()-1;
+                currentSubArrayIndex = classSubArrays.size() - 1;
                 classToSubArrayIndexMap[currentClassValue] = currentSubArrayIndex;
             } else {
                 currentSubArrayIndex = classToSubArrayIndexMap[currentClassValue];
@@ -79,10 +80,13 @@ public abstract class Classifier {
         int trainingInstancesSize = trainingInstances.getSize();
         int attributesCount = trainingInstances.getAttributes().size();
         int classAttributeIndex = attributesCount - 1;
-        Integer[] classToSubArrayIndexMap = new Integer[attributesCount];
-        ArrayList<ArrayList<Double[]>> classSubArrays = new ArrayList<>();
+        int numberOfClasses = trainingInstances.getAttributes().get(classAttributeIndex).getNominalValuesMap().size();
+        ArrayList<ArrayList<Double[]>> partitions = new ArrayList<>();
+        //initialize partitions
+        for (int classI = 0; classI < numberOfClasses; classI++) {
+            partitions.add(new ArrayList<>());
+        }
 
-        int currentSubArrayIndex;
         Integer currentClassValue;
         Instance currentInstance;
         ArrayList<Double> currentInstanceValues;
@@ -93,21 +97,11 @@ public abstract class Classifier {
             currentInstance = trainingInstances.getInstances().get(currentTrainingInstanceIndex);
             currentInstanceValues = currentInstance.getValues();
             currentClassValue = currentInstanceValues.get(classAttributeIndex).intValue();
-            if (classToSubArrayIndexMap[currentClassValue] == null) {
-                ArrayList<Double[]> subArrayInstances = new ArrayList<>();
-                subArrayInstances.add(currentInstanceValues.toArray(new
-                        Double[currentInstanceValues.size()]));
-                classSubArrays.add(subArrayInstances);
+            partitions.get(currentClassValue).add(currentInstanceValues.toArray(new
+                    Double[currentInstanceValues.size()]));
 
-                currentSubArrayIndex = classSubArrays.size()-1;
-                classToSubArrayIndexMap[currentClassValue] = currentSubArrayIndex;
-            } else {
-                currentSubArrayIndex = classToSubArrayIndexMap[currentClassValue];
-                classSubArrays.get(currentSubArrayIndex).add(currentInstanceValues.toArray(new
-                        Double[currentInstanceValues.size()]));
-            }
         }
-        return classSubArrays;
+        return partitions;
     }
 
     private Integer[] doubleValuesToIntegerArray(int attributesCount, ArrayList<Double> currentInstanceValues) {
