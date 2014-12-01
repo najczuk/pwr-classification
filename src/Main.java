@@ -69,13 +69,22 @@ public class Main {
 //        discretizer = new EqualWidthDiscretizer(kPar, instances);
 //        discretizedInstances = discretizer.discretizeNumericAttributes();
 //        ilaClassifier = new ILAClassifier(discretizedInstances);
-//        crossValidator = new CrossValidator(discretizedInstances, folds);
-//        cvStats = crossValidator.crossValidate();
+        crossValidator = new CrossValidator(instances, 14);
+        cvStats = crossValidator.crossValidate(NBClassifier.class);
+        System.out.println("Stats: "+cvStats);
 //        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
 
 
-        classifier = new NBClassifier(instances);
-
+//        classifier = new NBClassifier(instances);
+//        double variance = 0.0350333;
+//        double mean = 5.855;
+//                double value = 6;
+//        double attributeProb = (1 / (Math.sqrt(2 * Math.PI * variance))) *
+//                Math.exp(
+//                        (-Math.pow((value - mean), 2)) /
+//                                (2 * variance)
+//                );
+//        System.out.println(attributeProb);
 
 
     }
