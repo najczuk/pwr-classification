@@ -9,7 +9,6 @@ import pl.najczuk.machine_learning.instances.Instance;
 import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Adrian on 29/11/2014.

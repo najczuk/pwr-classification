@@ -101,4 +101,17 @@ public class Instances {
         }
         return stringBuilder.toString();
     }
+
+    public Double[][] getValuesArray(){
+        int rows = instances.size();
+        int cols = attributes.size();
+        Double[][] valuesArray = new Double[rows][cols];
+
+
+        ArrayList<Double> values;
+        for (int i = 0; i < rows; i++) {
+            valuesArray[i] = instances.get(i).getValues().toArray(new Double[cols]);
+        }
+        return valuesArray;
+    }
 }
