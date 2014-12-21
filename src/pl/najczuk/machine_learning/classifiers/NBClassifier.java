@@ -146,7 +146,7 @@ public class NBClassifier extends Classifier {
         for (int partitionI = 0; partitionI < partitions.size(); partitionI++) {
             for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
 
-                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
+//                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
                 for (int attrValI = 0; attrValI < partitionsAttributesValuesCounts[partitionI][attributeI].length;
                      attrValI++) {
                     if (attributes.get(attributeI).getType().equals(AttributeType.NOMINAL))
@@ -193,12 +193,12 @@ public class NBClassifier extends Classifier {
         int numberOfPartitions = partitionsAttributesValuesCounts.length;
         int numberOfAttributes = partitionsAttributesValuesCounts[0].length;
         for (int partitionI = 0; partitionI < numberOfPartitions; partitionI++) {
-            System.out.println("Partition " + partitionI);
+//            System.out.println("Partition " + partitionI);
             for (int attributeI = 0; attributeI < numberOfAttributes; attributeI++) {
-                System.out.println("Attribute: " + attributeI);
-                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
+//                System.out.println("Attribute: " + attributeI);
+//                System.out.println(Arrays.toString(partitionsAttributesValuesCounts[partitionI][attributeI]));
             }
-            System.out.println();
+//            System.out.println();
         }
     }
 

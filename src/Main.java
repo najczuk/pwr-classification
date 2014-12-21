@@ -23,56 +23,61 @@ public class Main {
         CrossValidator crossValidator;
         String cvStats;
 
-        System.out.println("dataSet, discretizer, kparameter, numberOfRules, folds, accuracy, tpRate, fpRate, " +
+        System.out.println("dataSet, discretizer, kparameter, folds, accuracy, tpRate, fpRate, " +
                 "precision, fScore");
 
-        String[] discretizers = {"EWD", "EFD"};
+        String[] discretizers = {"EWD", "EFD","NONE"};
         String[] dataSets = {"GLASS", "IRIS", "WEATHER"};
 //        String[] dataSets = {"WEATHER"};
-        int[] kPars = {1,4,6,9,13,16,20};
+        int[] kPars = {1, 4, 6, 9, 13, 16, 20};
         int[] foldCounts = {2, 5, 10, 15};
 
-//        for (String dataSet : dataSets) {
-//            String filePath;
-//            if (dataSet.equals("GLASS")) {
-//                filePath = "C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\glass.arff";
-//            } else if (dataSet.equals("IRIS")) {
-//                filePath = "D:\\workspace\\pwr\\pwr-classification\\datasets\\iris.arff";
-//            } else
-//                filePath = "D:\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff";
-//            arffReader = new ArffReader(filePath);
-//            instances = arffReader.getInstances();
-//            for (int kPar : kPars) {
-//            for (String discretizerName : discretizers) {
-//                if (discretizerName.equals("EWD"))
-//                    discretizer = new EqualWidthDiscretizer(kPar, instances);
-//                else
-//                    discretizer = new EqualFrequencyDiscretizer(kPar,instances);
-//                discretizedInstances = discretizer.discretizeNumericAttributes();
-////                System.out.println(discretizedInstances);
-//
-//                    for (int folds : foldCounts) {
-//                        crossValidator = new CrossValidator(discretizedInstances, folds);
-//                        cvStats = crossValidator.crossValidate();
-//                        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
-//
-//                    }
-//                }
-//
-//            }
-//
-//        }
+        for (String dataSet : dataSets) {
+            String filePath;
+            if (dataSet.equals("GLASS")) {
+                filePath = "C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\glass.arff";
+            } else if (dataSet.equals("IRIS")) {
+                filePath = "C:\\Users\\Adrian\\\\workspace\\pwr\\pwr-classification\\datasets\\iris.arff";
+            } else
+                filePath = "C:\\Users\\Adrian\\\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff";
+            arffReader = new ArffReader(filePath);
+            instances = arffReader.getInstances();
+            for (int kPar : kPars) {
+                for (String discretizerName : discretizers) {
+                    if (discretizerName.equals("EWD")) {
+                        discretizer = new EqualWidthDiscretizer(kPar, instances);
+                        discretizedInstances = discretizer.discretizeNumericAttributes();
+                    } else if (discretizerName.equals("EFD")) {
+                        discretizer = new EqualFrequencyDiscretizer(kPar, instances);
+                        discretizedInstances = discretizer.discretizeNumericAttributes();
+                    }
+                    else
+                        discretizedInstances = instances;
 
-        arffReader = new ArffReader
-                ("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff");
-        instances = arffReader.getInstances();
-//        discretizer = new EqualWidthDiscretizer(kPar, instances);
-//        discretizedInstances = discretizer.discretizeNumericAttributes();
-//        ilaClassifier = new ILAClassifier(discretizedInstances);
-        crossValidator = new CrossValidator(instances, 14);
-        cvStats = crossValidator.crossValidate(NBClassifier.class);
-        System.out.println("Stats: "+cvStats);
-//        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
+                    for (int folds : foldCounts) {
+                        crossValidator = new CrossValidator(discretizedInstances, folds);
+                        cvStats = crossValidator.crossValidate(NBClassifier.class);
+                        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + folds + ", " + cvStats);
+
+                    }
+                }
+
+            }
+
+        }
+
+//        System.out.println( "dataset, discretizer, kPar, folds, accuracy, tpRate, fpRate, precision, fScore");
+//
+//        arffReader = new ArffReader
+//                ("C:\\Users\\Adrian\\workspace\\pwr\\pwr-classification\\datasets\\weather.arff");
+//        instances = arffReader.getInstances();
+////        discretizer = new EqualWidthDiscretizer(kPar, instances);
+////        discretizedInstances = discretizer.discretizeNumericAttributes();
+////        ilaClassifier = new ILAClassifier(discretizedInstances);
+//        crossValidator = new CrossValidator(instances, 14);
+//        cvStats = crossValidator.crossValidate(NBClassifier.class);
+//        System.out.println("Stats: "+cvStats);
+////        System.out.println(dataSet + ", " + discretizerName + ", " + kPar + ", " + cvStats);
 
 
 //        classifier = new NBClassifier(instances);

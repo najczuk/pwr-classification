@@ -46,7 +46,7 @@ public class ArffReader {
     public ArffReader(String filePath) {
         setFilePath(filePath);
         setInstances(extractInstancesFromFile());
-        System.out.println(getInstances());
+//        System.out.println(getInstances());
     }
 
 

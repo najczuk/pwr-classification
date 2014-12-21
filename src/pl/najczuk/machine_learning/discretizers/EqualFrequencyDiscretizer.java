@@ -21,7 +21,7 @@ public class EqualFrequencyDiscretizer extends UnsupervisedDiscretizer {
 //        sortNumericValues(attributeValues);
 
         Set set = new HashSet<>((ArrayList<Double>)attributeValues.clone());
-        ArrayList<Double> distinctValues = new ArrayList<>(set);
+        ArrayList<Double> distinctValues = new ArrayList<Double>(set);
         Collections.sort(distinctValues);
 //        System.out.println(Arrays.toString(distinctValues.toArray()));
 
