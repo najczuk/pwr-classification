@@ -6,15 +6,17 @@ import pl.najczuk.machine_learning.instances.Instances;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class KNNClassifier extends Classifier {
     public static double EUCLIDEAN = 2, MANHATTAN = 1.0, CHEBYSHEV = 100;
-    private int k, minkowskiBase;
+    private int k, minkowskiBase, numOfClasses;
     private Double[][] values, normalizedValues;
 
     public KNNClassifier(Instances trainingInstances, int k, int minkowskiBase) {
         super(trainingInstances);
         this.k = k;
+        numOfClasses = trainingInstances.getAttributes().size();
         this.minkowskiBase = minkowskiBase;
         values = trainingInstances.getValuesArray();
         normalizedValues = normalizeValues(values);
@@ -39,18 +41,69 @@ public class KNNClassifier extends Classifier {
 
     @Override
     public Double classify(Instance instance) {
+        getNearestNeighbour(instance.getValues().toArray(new Double[instance.getValues().size()]));
         return null;
     }
 
 
-    //    private void getDataArray
 
-    private void getNearestNeighbours(Double[] instanceValues){
-                
+    public Double getNearestNeighbour(Double[] instanceValues) {
+        Double[][] classWithDistance = new Double[normalizedValues.length][2];
+        int classIndex = normalizedValues[0].length - 1;
+        for (int i = 0; i < normalizedValues.length; i++) {
+            Double[] values = {normalizedValues[i][classIndex], calculateDistance(normalizedValues[i], instanceValues,
+                    minkowskiBase, 1)};
+            classWithDistance[i] = values;
+        }
+        System.out.println(Arrays.deepToString(classWithDistance));
+
+        Arrays.sort(classWithDistance, new Comparator<Double[]>() {
+            @Override
+            public int compare(Double[] o1, Double[] o2) {
+                final Double distance1 = o1[1];
+                final Double distance2 = o2[1];
+                return distance1.compareTo(distance2);
+            }
+        });
+
+        Double[][] subKArray = Arrays.copyOfRange(classWithDistance,0,k);
+
+        System.out.println(Arrays.deepToString(subKArray));
+        return getRankingLeader(subKArray);
     }
 
-    private double calculateDistance(double[] i1, double[] i2, double p) {
-        int limit = i1.length;
+    public double getRankingLeader(Double[][] classWithDistance){
+
+        double[] classesCount = new double[numOfClasses];
+        for (int i = 0; i < classWithDistance.length; i++) {
+            classesCount[classWithDistance[i][0].intValue()]++;
+        }
+
+        int leaderIndex=-1;
+        int leaderCount=-1;
+        boolean noUniqueLeader = false;
+
+        for (int i = 0; i < classesCount.length; i++) {
+            if(classesCount[i]>leaderCount){
+                leaderIndex=i;
+                leaderCount=(int)classesCount[i];
+                noUniqueLeader=false;
+            } else if(classesCount[i]==leaderCount){
+                noUniqueLeader=true;
+            }
+        }
+
+        if (noUniqueLeader){
+            System.out.println("no unique leader");
+           return getRankingLeader(Arrays.copyOfRange(classWithDistance,0,k-1));
+        }
+        return leaderIndex;
+
+
+    }
+
+    private double calculateDistance(Double[] i1, Double[] i2, double p, int offset) {
+        int limit = i1.length - offset;
         double sum = 0;
         for (int i = 0; i < limit; i++) {
             sum += Math.pow(
