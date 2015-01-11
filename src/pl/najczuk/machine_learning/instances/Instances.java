@@ -117,11 +117,17 @@ public class Instances {
     }
 
     public void normalizeInstances(){
+
+//        System.out.println(Arrays.deepToString(getValuesArray()));
         Double[][] normalizedValues = normalizeValues(getValuesArray());
+//        System.out.println(Arrays.deepToString(normalizedValues));
+
 
         for (int i = 0; i < instances.size(); i++) {
-            instances.get(i).setValues(new ArrayList<>(Arrays.asList(normalizedValues[1])));
+            instances.get(i).setValues(new ArrayList<>(Arrays.asList(normalizedValues[i])));
         }
+
+//        System.out.println(Arrays.deepToString(getValuesArray()));
     }
     private Double[][] normalizeValues(Double[][] values) {
         int rows = values.length;
