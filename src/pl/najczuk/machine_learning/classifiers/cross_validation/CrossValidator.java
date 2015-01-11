@@ -2,6 +2,7 @@ package pl.najczuk.machine_learning.classifiers.cross_validation;
 
 import pl.najczuk.machine_learning.classifiers.Classifier;
 import pl.najczuk.machine_learning.classifiers.ILAClassifier;
+import pl.najczuk.machine_learning.classifiers.KNNClassifier;
 import pl.najczuk.machine_learning.classifiers.NBClassifier;
 import pl.najczuk.machine_learning.instances.Instance;
 import pl.najczuk.machine_learning.instances.Instances;
@@ -61,6 +62,38 @@ public class CrossValidator {
         return stringBuilder.toString();
 //        getAverageValuesFromArrayCols(stats);
     }
+    public String crossValidateKNN(double k,double minkowskiBase) {
+        double[][] confusionMatrix = new double[numberOfClasses][numberOfClasses];
+        Instances trainingInstances, testInstances;
+        InstancesFolder instancesFolder = new InstancesFolder(instances, numberOfFolds);
+        Double testInstanceClass, classificationClass;
+        Classifier classifier;
+
+        for (int iteration = 0; iteration < numberOfFolds; iteration++) {
+//            System.out.println("Iteracja: " + iteration);
+            testInstances = instancesFolder.getTestInstances(iteration);
+            trainingInstances = instancesFolder.getTrainingInstances(iteration);
+            ArrayList<Instance> testInstancesList = testInstances.getInstances();
+            classifier = new KNNClassifier(trainingInstances,(int)k,minkowskiBase);
+
+            for (Instance testInstance : testInstancesList) {
+                testInstanceClass = testInstance.getValues().get(testInstance.getValues().size() - 1);
+                classificationClass = classifier.classify(testInstance);
+                confusionMatrix[testInstanceClass.intValue()][classificationClass.intValue()]++;
+            }
+        }
+//        System.out.println("Overall STATS");
+//        System.out.println("Number of rules " + numberOfRules/numberOfFolds);
+//        System.out.println("Number of iterations "+ numberOfFolds);
+
+        String stats = Arrays.toString(averageConfusionStats(confusionMatrix)).replace("[", "").replace("]", "")
+                .replace(" ", "");
+        StringBuilder stringBuilder = new StringBuilder().append(stats);
+//        stringBuilder.append(numberOfRules / numberOfFolds + ", ").append(numberOfFolds + ", ").append(stats);
+        return stringBuilder.toString();
+//        getAverageValuesFromArrayCols(stats);
+    }
+
 
     private double[] averageConfusionStats(double[][] confusionMatrix) {
         double[][] valuesContainer = new double[confusionMatrix.length][];
